@@ -1,5 +1,5 @@
 ﻿import { Nameable, Visible, HasData, GameValue } from "./BaseTypes";
-import { NO_PLAYERS } from "./Literals";
+import { NO_PLAYERS, ALL_PLAYERS } from "./Literals";
 
 export enum PieceType {
     Simple,
@@ -16,7 +16,7 @@ export interface Piece extends Nameable, Visible, HasData {
     imageId: string,
 }
 
-export interface PieceSide extends Nameable, Visible, HasData {
+export interface PieceSide extends Nameable, Visible {
     imageId: string,
 }
 
@@ -30,7 +30,6 @@ export interface CollectionPiece extends Piece {
     type: PieceType.Collection,
     sizeVisibleTo: GameValue // Returns a list of players
 }
-
 
 // Timers: Causes an event to occur at a future time
 export interface TimerPiece extends Piece {
@@ -61,6 +60,19 @@ export interface BoardLocation extends Nameable, Visible, HasData {
     adjacenctLocationIds: Record<string, string>, //Named adjacencies.  Names are used to allow similar traversal across multiple locations
     position: BoardPosition,
     imageId: string,
+}
+
+export const EMPTY_BOARD_LOCATION: BoardLocation = {
+    id: "",
+    name: "",
+    visibleTo: ALL_PLAYERS,
+    adjacenctLocationIds: {},
+    position: {
+        x: 0,
+        y: 0
+    },
+    imageId: "",
+    gameData: {}
 }
 
 export interface BoardPosition {

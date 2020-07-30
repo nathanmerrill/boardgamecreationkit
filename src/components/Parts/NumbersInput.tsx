@@ -7,7 +7,7 @@ function range(start: number, stop: number): number[] {
 
 function NumberCheckbox(num: number, onChange: ((event: number[]) => void), numbers: number[]) {
     return (
-        <div className="form-check form-check-inline" key={"checkbox"+num}>
+        <div className="form-check form-check-inline">
             <input type="checkbox" className="form-check-input" id={"numberCheck" + num} defaultChecked={numbers.includes(num)} onChange={(e) => {
                 if (e.target.checked) {
                     onChange(numbers.concat([num]));

@@ -14,7 +14,7 @@ export interface Visible {
 
 // Custom key-value data that can be set by the designer (such as card suits), or by scripts during runtime
 export interface HasData {
-    gameData: Record<string, GameValue>
+    gameData: Record<string, LiteralValue>
 }
 
 export interface GameValue {
@@ -30,8 +30,7 @@ export interface ScriptedValue {
 
 export interface LiteralValue extends GameValue {
     type: ValueType.Literal,
-    value: string,
-    constant: boolean,
+    value: string
 }
 
 export enum DataType {
@@ -54,3 +53,15 @@ export interface GameImage extends Nameable {
     svg: string,
 }
 
+export const EMPTY_GAME_IMAGE: GameImage = {
+    id: "",
+    name: "",
+    svg: ""
+}
+
+
+export const EMPTY_LITERAL_VALUE: LiteralValue = {
+    type: ValueType.Literal,
+    returnType: DataType.String,
+    value: ""
+}

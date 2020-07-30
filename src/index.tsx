@@ -1,4 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.css';
+import "react-responsive-carousel/lib/styles/carousel.min.css";
+import 'jquery/dist/jquery'
+import 'bootstrap/dist/js/bootstrap'
 
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';

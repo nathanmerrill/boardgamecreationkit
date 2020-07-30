@@ -1,32 +1,27 @@
 import * as React from 'react';
 import NumbersInput from '../Parts/NumbersInput';
-import { prototypeConnect, PrototypeProps } from './scope';
+import { FormGroup, Label, Input } from 'reactstrap';
+import { PrototypeContext } from './context';
 
 
-function BasicInfo(props: PrototypeProps) {
+export default function BasicInfo() {
+    const prototype = React.useContext(PrototypeContext)
     return (
         <form>
-            <div className="form-group">
-                <label htmlFor="gameName">Game Name</label>
-                <input type="text" className="form-control" id="gameName" defaultValue={props.name} onChange={(e) => {
-                    const val = props.setName(e.target.value);
-                    console.log("Set name", val);
-                }} />
-            </div>
-            <div className="form-group">
-                <label htmlFor="gameName">Author</label>
-                <input type="text" className="form-control" id="gameName" defaultValue={props.authorUsername} onChange={(e) => props.setAuthor(e.target.value)} />
-            </div>
-            <div className="form-group">
-                <label htmlFor="gameName">Game Description</label>
-                <textarea className="form-control" id="gameName" defaultValue={props.description} onChange={(e) => props.setDescription(e.target.value)} />
-            </div>
-            <span>Player Count</span>
-            <NumbersInput onChange={(numbers) => {
-                console.log("Set player counts", props.setPlayerCounts(numbers));
-            }} numbers={props.allowedPlayerCounts} />
+            <FormGroup>
+                <Label for="gameName">Game Name</Label>
+                <Input id="gameName" defaultValue={prototype.name} onChange={(e) => prototype.setName(e.target.value)} />
+            </FormGroup>
+            <FormGroup>
+                <Label for="author">Author</Label>
+                <Input id="author" defaultValue={prototype.authorUsername} onChange={(e) => prototype.setAuthor(e.target.value)} />
+            </FormGroup>
+            <FormGroup>
+                <Label for="gameDescription">Game Description</Label>
+                <Input type="textarea" id="gameDescription" defaultValue={prototype.authorUsername} onChange={(e) => prototype.setDescription(e.target.value)} />
+            </FormGroup>
+            <label>Player Count</label>
+            <NumbersInput onChange={(numbers) => prototype.setPlayerCounts(numbers)} numbers={prototype.allowedPlayerCounts} />
         </form>
     );
 }
-
-export default prototypeConnect()(BasicInfo);

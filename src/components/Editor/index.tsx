@@ -1,48 +1,58 @@
 import * as React from 'react';
-import { Redirect } from 'react-router';
+import { Redirect, RouteComponentProps } from 'react-router';
 import { Link } from 'react-router-dom';
 import PrototypeBasicInfo from './BasicInfo';
 import PrototypePieces from './Pieces';
 import PrototypeTimeline from './Timeline';
-import { PrototypeProps, prototypeConnect } from './scope';
+import { prototypeConnect } from './scope';
+import DataSets from './DataSets';
+import { PrototypeContext, PrototypeProps } from './context';
+import { Nav, NavItem } from 'reactstrap';
 
-function SubpageLink(props: { subpage: string, title: string, props: PrototypeProps }) {
-    const matched = props.props.match.params;
+export type RouteProps = { subpage: string | undefined, prototypeid: string, subitemid: string | undefined }
+
+function SubpageLink(props: { subpage: string, title: string, match: RouteProps}) {
+    const matched = props.match;
     const currentSubpage = matched.subpage ? matched.subpage : '';
     const currentId = matched.prototypeid;
 
     return (
-        <li className="nav-item">
+        <NavItem>
             <Link className={`nav-link${props.subpage === currentSubpage ? ' active' : ''}`} to={"/Create/" + currentId + "/" + props.subpage}>{props.title}</Link>
-        </li>
+        </NavItem>
     )
 }
 
-function SubPageContent(props: { props: PrototypeProps }) {
-    switch (props.props.match.params.subpage) {
+function SubPageContent(props: { match: RouteProps }) {
+    switch (props.match.subpage) {
         case 'pieces':
-            return <PrototypePieces match={props.props.match} />;
+            return <PrototypePieces selectedPieceId={props.match.subitemid}/>;
+        case 'datasets':
+            return <DataSets selectedDataSetId={props.match.subitemid} />;
         case 'timeline':
-            return <PrototypeTimeline match={props.props.match} />;
+            return <PrototypeTimeline />;
         default:
-            return <PrototypeBasicInfo match={props.props.match} />;        
+            return <PrototypeBasicInfo />;        
     }
 }
 
-function Editor(props: PrototypeProps) {
-    if (!props.id) {
+function Editor(prototype: PrototypeProps & RouteComponentProps<RouteProps>) {
+    if (!prototype.id) {
         return (<Redirect to="/Create" />)
     }
 
+    const match = prototype.match.params;
+
     return (
-        <React.Fragment>
-            <ul className="nav nav-tabs">
-                <SubpageLink subpage="" title="Basic Info" props={props} />
-                <SubpageLink subpage="pieces" title="Pieces" props={props} />
-                <SubpageLink subpage="timeline" title="Timeline" props={props} />
-            </ul>
-            <SubPageContent props={props} />
-        </React.Fragment>
+        <PrototypeContext.Provider value={prototype}>
+            <Nav tabs>
+                <SubpageLink subpage="" title="Basic Info" match={match} />
+                <SubpageLink subpage="pieces" title="Pieces" match={match}  />
+                <SubpageLink subpage="datasets" title="Data Sets" match={match}  />
+                <SubpageLink subpage="timeline" title="Timeline" match={match}  />
+            </Nav>
+            <SubPageContent match={match}  />
+        </PrototypeContext.Provider>
     );
 }
 

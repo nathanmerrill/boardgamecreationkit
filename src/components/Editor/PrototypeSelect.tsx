@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import * as Prototype from '../../store/types/Prototype';
 import Timeago from 'react-timeago';
 import { ApplicationState } from '../../store';
+import { ListGroup, ListGroupItem } from 'reactstrap';
+import ForEach from '../Parts/ForEach';
 
 
 type GameProps =
@@ -14,36 +16,36 @@ type GameProps =
     RouteComponentProps<{}>;
 
 
-function PrototypeItem(prototype: Prototype.Prototype) {
-    console.log("Prototype name", prototype.name);
+function PrototypeItem(props: {prototype: Prototype.Prototype}) {
     return (
-        <Link to={`/Create/${prototype.id}`} className="list-group-item list-group-item-action flex-column align-items-start" key={prototype.id}>
+        <Link to={`/Create/${props.prototype.id}`} className="list-group-item list-group-item-action flex-column align-items-start">
             <div className="d-flex justify-content-between">
-                <h5 className="mb-1">{prototype.name}</h5>
-                <small><Timeago date={prototype.updatedAt} /></small>
+                <h5 className="mb-1">{props.prototype.name}</h5>
+                <small><Timeago date={props.prototype.updatedAt} /></small>
             </div>
         </Link>
     )
 }
 
 function SelectPrototype(props: GameProps) {
-    const prototypeItems = Object.values(props.prototypes).sort(a => new Date(a.updatedAt).getTime()).map(PrototypeItem);
+    const prototypeItems = Object.values(props.prototypes).sort(a => new Date(a.updatedAt).getTime());
     const history = useHistory();
     return (
         <React.Fragment>
-            <div className="list-group">
-                <button onClick={(e) => {
-                    e.preventDefault();
+            <ListGroup>
+                <ListGroupItem tag="button" action onClick={(e) => {
                     var prototypeAction = props.newPrototype();
                     history.push('/Create/' + prototypeAction.payload.id);
-                }} className="list-group-item list-group-item-action">
+                }}>
                     <h5 className="text-center">Create new Prototype </h5>
-                </button>
-            </div>
+                </ListGroupItem>
+            </ListGroup>
             <h5> In progress: </h5>
-            <div className="list-group pl-3">
-                {prototypeItems}
-            </div>
+            <ListGroup className="pl-3">
+                <ForEach values={prototypeItems}>
+                    {prototype => <PrototypeItem prototype={prototype} />}
+                </ForEach>
+            </ListGroup>
         </React.Fragment>
     );
 }

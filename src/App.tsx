@@ -12,7 +12,7 @@ export default () => (
         <Switch>
             <Route exact path='/' component={Home} />
             <Route exact path='/Create' component={PrototypeSelect} />
-            <Route path="/Create/:prototypeid/:subpage?" component={Editor} />
+            <Route path="/Create/:prototypeid/:subpage?/:subitemid?" component={Editor} />
         </Switch>
     </Layout>
 );
