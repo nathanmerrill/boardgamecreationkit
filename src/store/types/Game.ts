@@ -1,4 +1,4 @@
-﻿import { Nameable, GameImage } from "./BaseTypes";
+﻿import { Nameable, GameImage, GameScript } from "./BaseTypes";
 import { Piece, PieceSide, BoardLocation } from "./Pieces";
 import { GameAction } from "./Actions";
 import { GameState, EMPTY_GAMESTATE } from "./GameState";
@@ -12,12 +12,14 @@ export interface Game extends Nameable {
     updatedAt: string,
     allowedPlayerCounts: number[],
     initialState: GameState,
+    rootAction: string,
 
     allPieces: Record<string, Piece>
     allActions: Record<string, GameAction>
     allSides: Record<string, PieceSide>
     allLocations: Record<string, BoardLocation>
     allImages: Record<string, GameImage>
+    allScripts: Record<string, GameScript>
 }
 
 export const EMPTY_GAME: Game = {
@@ -26,6 +28,7 @@ export const EMPTY_GAME: Game = {
     description: "",
     authorUsername: "",
     updatedAt: "",
+    rootAction: "",
     allowedPlayerCounts: [],
     initialState: EMPTY_GAMESTATE,
 
@@ -34,6 +37,7 @@ export const EMPTY_GAME: Game = {
     allSides: {},
     allLocations: {},
     allImages: {},
+    allScripts: {},
 }
 
 export const reducer: Reducer<Game> = createReducer(EMPTY_GAME, builder =>

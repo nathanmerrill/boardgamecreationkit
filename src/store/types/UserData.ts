@@ -3,7 +3,9 @@ import * as Prototype from "./Prototype";
 import * as Game from "./Game";
 import * as GameState from "./GameState";
 import * as Player from "./Player";
-import { createReducer, createAction, nanoid } from "@reduxjs/toolkit"
+import { createReducer, createAction, nanoid, PayloadAction } from "@reduxjs/toolkit"
+import { GameScripts, LiteralScript, GameAction } from "./Actions";
+import { ValueType, GameScript, DataType, ScriptedValue, LiteralValue, GameValue } from "./BaseTypes";
 
 export function fillData<T>(emptyType: T, data: Partial<T> = {}) {
     return () => {
@@ -17,8 +19,103 @@ export function fillData<T>(emptyType: T, data: Partial<T> = {}) {
     }
 }
 
+function mapObject<T, U>(object: Record<string, U>, func: (value: U, key: string) => T) : Record<string, T>{
+    return Object.keys(object).reduce((record, key) => {
+        return {
+            ...record,
+            key: func(object[key], key)
+        }
+    }, {})
+}
+
+function literalScriptToGameScript(name: string, literalScript: LiteralScript): GameScript {
+    return {
+        id: nanoid(),
+        script: literalScript.script,
+        returnType: literalScript.returnType,
+        name: name,
+        parameters: mapObject(literalScript.arguments, (value, key) => value.returnType)
+    }
+}
+
+function literalScriptToScriptedValue(name: string, literalScript: LiteralScript): {value: ScriptedValue, scripts: GameScript[]} {
+    const script = literalScriptToGameScript(name, literalScript)
+    
+    const argumentDependencies = mapObject(literalScript.arguments, (argument: LiteralScript | LiteralValue, argName: string) => {
+        if ("script" in argument){
+            return literalScriptToScriptedValue(argName, argument as LiteralScript)
+        } else {
+            return {
+                value: argument as LiteralValue,
+                scripts: [],
+            }
+        }
+    })
+
+    const scripts = Object.values(argumentDependencies).reduce((arr, a) => arr.concat(a.scripts), [] as GameScript[])
+    scripts.push(script)
+
+    return{
+        value: {
+            type: ValueType.Function,
+            scriptId: script.id,
+            arguments: mapObject(argumentDependencies, (a) => a.value),
+            returnType: literalScript.returnType
+        },
+        scripts: scripts
+    } 
+}
+
+function literalScriptToAction(name: string, literalScript: LiteralScript, prototype: Prototype.Prototype): {action: GameAction, prototype: Prototype.Prototype, scripts: GameScript[]}{
+    
+    let {value, scripts} = literalScriptToScriptedValue(name, literalScript)
+
+    let action: GameAction = {
+        id: nanoid(),
+        name: name,
+        value: value
+    }
+
+    return {
+        action: action,
+        prototype: {
+            ...prototype,
+            allActions: {
+                ...prototype.allActions,
+                [action.id]: action
+            },
+            allScripts: {
+                ...prototype.allScripts,
+                ...scripts.reduce((record, value) => {
+                    record[value.id] = value
+                    return record
+                }, {} as Record<string, GameScript>)
+            }
+        },
+        scripts: scripts,
+    }
+}
+
 export const actions = {
-    newPrototype: createAction("NEW_PROTOTYPE", fillData(Prototype.EMPTY_PROTOTYPE, { authorUsername: "Unnamed", name: "Untitled", allowedPlayerCounts: [2]})),
+    newPrototype: createAction("NEW_PROTOTYPE", () => {
+        const prototype = {
+            ...Prototype.EMPTY_PROTOTYPE,
+            id: nanoid(),
+            authorUsername: "Unnamed", 
+            name: "Untitled", 
+            allowedPlayerCounts: [2],
+        }
+        const rootAction = literalScriptToAction("root", GameScripts.Multistep, prototype)
+        return {
+            payload: {
+                ...rootAction.prototype,
+                rootAction: rootAction.action.id,
+                allActions: {
+                    [rootAction.action.id]: rootAction.action
+                }
+            }
+        }
+    }),
     deletePrototype: createAction<string>("DELETE_PROTOTYPE"),
     startGame: createAction("START_GAME", (game: Game.Game, players: Player.Player[]) => {
         return {

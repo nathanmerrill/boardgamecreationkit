@@ -1,7 +1,30 @@
-﻿import { Nameable, GameValue } from "./BaseTypes";
+﻿import { Nameable, GameValue,  ValueType, DataType, LiteralValue, ScriptedValue } from "./BaseTypes";
+import { GameState } from "./GameState";
 
 export interface GameAction extends Nameable {
-    script: GameValue, // Passed a GameState and Game, returns a modified GameState
+    value: LiteralValue | ScriptedValue,
+}
+
+export type LiteralScript = {
+    returnType: DataType,
+    arguments: Record<string, LiteralScript | LiteralValue>
+    script: string,
+}
+
+export const GameScripts: Record<string, LiteralScript> = {
+    Multistep: {
+        returnType: DataType.GameState,
+        arguments: {
+            steps: {
+                type: ValueType.Literal,
+                value: "[]",
+                returnType: DataType.Actions,
+            }
+        },
+        script: ((state: GameState, steps: GameAction[]) => {
+            state.queuedActions.concat(steps.map(s => s.id))
+        }).toString(),        
+    }
 }
 
 export enum MoveType {

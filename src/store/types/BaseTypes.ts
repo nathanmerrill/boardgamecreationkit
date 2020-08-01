@@ -22,10 +22,10 @@ export interface GameValue {
     returnType: DataType,
 }
 
-export interface ScriptedValue {
+export interface ScriptedValue extends GameValue {
     type: ValueType.Function,
     scriptId: string,
-    arguments: Record<string, GameValue>
+    arguments: Record<string, ScriptedValue | LiteralValue>
 }
 
 export interface LiteralValue extends GameValue {
@@ -34,8 +34,8 @@ export interface LiteralValue extends GameValue {
 }
 
 export enum DataType {
-    String, Number, Boolean, Piece, Player, Location, Side,
-    Strings, Numbers, Booleans, Pieces, Players, Locations, Sides,
+    String, Number, Boolean, Piece, Player, Location, Side, Action, Move, GameState,
+    Strings, Numbers, Booleans, Pieces, Players, Locations, Sides, Actions, Moves,    
 }
 
 export enum ValueType {
