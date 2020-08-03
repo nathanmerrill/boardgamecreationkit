@@ -1,13 +1,15 @@
-﻿import { Reducer } from 'redux';
-import { createReducer, createAction } from '@reduxjs/toolkit';
-import { Game, EMPTY_GAME } from './Game';
-import { fillData } from './UserData';
-import { DataSet, PieceSet, BoardLocationSet, EMPTY_PIECE_SET, EMPTY_DATASET } from './PrototypeDefs';
-import { GameImage } from './BaseTypes';
-import { Piece } from './Pieces';
+﻿import BoardLocationSet from './BoardLocationSet';
+import Game, { EMPTY_GAME } from '../Game';
+import GameImage from '../GameImage';
+import Piece from '../Piece';
+import PieceSet, { EMPTY_PIECE_SET } from './PieceSet';
+import { createAction, createReducer } from '@reduxjs/toolkit';
+import { DataSet, EMPTY_DATASET } from './DataSet';
+import { fillData } from '../../../lib';
+import { Reducer } from 'redux';
 
 
-export interface Prototype extends Game {
+export default interface Prototype extends Game {
     allPieceSets: Record<string, PieceSet>
     allLocationSets: Record<string, BoardLocationSet>
     allDataSets: Record<string, DataSet>
@@ -20,7 +22,7 @@ export const EMPTY_PROTOTYPE: Prototype = {
     allLocationSets: {},
 }
 
-export const actions = {
+const actions = {
     setName: createAction<string>("SET_NAME"),
     setAuthor: createAction<string>("SET_AUTHOR"),
     setDescription: createAction<string>("SET_DESCRIPTION"),
@@ -34,9 +36,9 @@ export const actions = {
     setDataSetProps: createAction<Partial<DataSet>&{id: string}>("SET_DATA_SET_PROPS"),
 }
 
+export const prototypeActions = actions
 
-
-export const reducer: Reducer<Prototype> = createReducer(EMPTY_PROTOTYPE, builder =>
+export const reducePrototype: Reducer<Prototype> = createReducer(EMPTY_PROTOTYPE, builder =>
     builder
         .addCase(actions.setName, (state, action) => { state.name = action.payload })
         .addCase(actions.setAuthor, (state, action) => { state.authorUsername = action.payload })
@@ -51,14 +53,14 @@ export const reducer: Reducer<Prototype> = createReducer(EMPTY_PROTOTYPE, builde
                 ...action.payload,
             }
         }).addCase(actions.setPieceSetPieceProps, (state, action) => {
-            const pieceSet = state.allPieceSets[action.payload.id]
-            const payload = {...action.payload}
+            const pieceSet: PieceSet = state.allPieceSets[action.payload.id]
+            const payload: Partial<Piece> = {...action.payload}
             delete payload.id
             state.allPieceSets[action.payload.id] = {
                 ...pieceSet,
                 piece: {
-                    ...pieceSet.piece,
-                    ...payload
+                    ...pieceSet.piece as any,
+                    ...payload,
                 }
             }
         })

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import NumbersInput from '../Parts/NumbersInput';
-import { FormGroup, Label, Input } from 'reactstrap';
+import { FormGroup, Input, Label } from 'reactstrap';
 import { PrototypeContext } from './context';
 
 

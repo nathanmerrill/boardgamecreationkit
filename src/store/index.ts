@@ -1,4 +1,4 @@
-import * as UserData from "./types/UserData";
+import * as UserData from './UserData';
 
 export const reducers = {
     userData: UserData.reducer,

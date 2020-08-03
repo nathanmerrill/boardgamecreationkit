@@ -1,18 +1,27 @@
 import * as React from 'react';
-import { useHistory } from 'react-router';
-import { DataSet } from '../../store/types/PrototypeDefs';
-import { Link } from 'react-router-dom';
-import 'handsontable/dist/handsontable.full.css'
-import { HotTable } from '@handsontable/react'
-import { ImageSelector } from '../Parts/ImageSelector';
-import Handsontable from 'handsontable';
 import $ from 'jquery';
-import { isString } from 'util';
-import ReactDOMServer from 'react-dom/server';
-import { ImageDisplay } from '../Parts/ImageDisplay';
-import { Badge, ListGroup, ListGroupItem, Row, Col, FormGroup, Label, Input } from 'reactstrap';
 import ForEach from '../Parts/ForEach';
+import Handsontable from 'handsontable';
+import ReactDOMServer from 'react-dom/server';
+import {
+    Badge,
+    Col,
+    FormGroup,
+    Input,
+    Label,
+    ListGroup,
+    ListGroupItem,
+    Row
+    } from 'reactstrap';
+import { DataSet } from '../../store/types/Prototype/DataSet';
+import { HotTable } from '@handsontable/react';
+import { ImageDisplay } from '../Parts/ImageDisplay';
+import { ImageSelector } from '../Parts/ImageSelector';
+import { isString } from 'util';
+import { Link } from 'react-router-dom';
 import { PrototypeContext } from './context';
+import { useHistory } from 'react-router';
+import 'handsontable/dist/handsontable.full.css';
 
 function DataSetButton(props: {dataSet: DataSet, selectedDataSetId: string | undefined}){
     const prototype = React.useContext(PrototypeContext)

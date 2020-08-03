@@ -1,12 +1,13 @@
-﻿import { Nameable, GameImage, GameScript } from "./BaseTypes";
-import { Piece, PieceSide, BoardLocation } from "./Pieces";
-import { GameAction } from "./Actions";
-import { GameState, EMPTY_GAMESTATE } from "./GameState";
-import { Reducer } from "redux";
-import { createReducer } from "@reduxjs/toolkit";
+﻿import GameAction from './GameAction';
+import GameImage from './GameImage';
+import GameState, { EMPTY_GAMESTATE } from './GameState';
+import Piece, { BoardLocation, PieceSide } from './Piece';
+import { createReducer } from '@reduxjs/toolkit';
+import { GameScript, Nameable } from './BaseTypes';
+import { Reducer } from 'redux';
 
 // Data that does not change during gameplay
-export interface Game extends Nameable {
+export default interface Game extends Nameable {
     description: string,
     authorUsername: string,
     updatedAt: string,

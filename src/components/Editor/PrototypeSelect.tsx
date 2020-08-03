@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { RouteComponentProps, useHistory } from 'react-router';
-import * as UserData from '../../store/types/UserData';
-import { Link } from 'react-router-dom';
-import * as Prototype from '../../store/types/Prototype';
+import * as UserData from '../../store/UserData';
+import ForEach from '../Parts/ForEach';
+import Prototype from '../../store/types/Prototype';
 import Timeago from 'react-timeago';
 import { ApplicationState } from '../../store';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import { ListGroup, ListGroupItem } from 'reactstrap';
-import ForEach from '../Parts/ForEach';
+import { RouteComponentProps, useHistory } from 'react-router';
 
 
 type GameProps =
@@ -16,7 +16,7 @@ type GameProps =
     RouteComponentProps<{}>;
 
 
-function PrototypeItem(props: {prototype: Prototype.Prototype}) {
+function PrototypeItem(props: {prototype: Prototype}) {
     return (
         <Link to={`/Create/${props.prototype.id}`} className="list-group-item list-group-item-action flex-column align-items-start">
             <div className="d-flex justify-content-between">

@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { connect } from 'react-redux';
-import { RouteComponentProps } from 'react-router';
-import { UserData, actions } from '../../store/types/UserData';
-import { Link } from 'react-router-dom';
+import { actions, UserData } from '../../store/UserData';
 import { ApplicationState } from '../../store';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router';
 
 type GameProps =
     UserData &

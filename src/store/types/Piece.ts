@@ -1,5 +1,5 @@
-﻿import { Nameable, Visible, HasData, GameValue } from "./BaseTypes";
-import { NO_PLAYERS, ALL_PLAYERS } from "./Literals";
+﻿import { GameValue, HasData, Nameable, Visible } from './BaseTypes';
+import { NO_PLAYERS } from '../library/LiteralValues';
 
 export enum PieceType {
     Simple,
@@ -11,61 +11,71 @@ export enum PieceType {
     Board,
 }
 
-export interface Piece extends Nameable, Visible, HasData {
+interface PieceBase extends Nameable, Visible, HasData {
     type: PieceType,
     imageId: string,
+}
+
+export interface SimplePiece extends PieceBase {
+    type: PieceType.Simple
+}
+
+// Sided piece (dice, cards)
+export interface SidedPiece extends PieceBase {
+    type: PieceType.Sided,
+    sideIds: string[],
 }
 
 export interface PieceSide extends Nameable, Visible {
     imageId: string,
 }
 
-// Sided piece (dice, cards)
-export interface SidedPiece extends Piece {
-    type: PieceType.Sided,
-    sideIds: string[],
-}
-
-export interface CollectionPiece extends Piece {
+// Collection pieces contain other pieces
+export interface CollectionPiece extends PieceBase {
     type: PieceType.Collection,
     sizeVisibleTo: GameValue // Returns a list of players
 }
 
 // Timers: Causes an event to occur at a future time
-export interface TimerPiece extends Piece {
+export interface TimerPiece extends PieceBase {
     type: PieceType.Timer,
     font: string,
     actionId: string,
 }
 
 // Text: Players can draw on these pieces (crayon style)
-export interface DrawingPiece extends Piece {
+export interface DrawingPiece extends PieceBase {
     type: PieceType.Drawing,
-    width: number,
+    penWidth: number,
 }
 
 // Text: Players can write on these pieces
-export interface TextPiece extends Piece {
+export interface TextPiece extends PieceBase {
     type: PieceType.Text,
     font: string,
 }
 
 // Boards: Contain locations that pieces can be placed on
-export interface BoardPiece extends Piece {
+export interface BoardPiece extends PieceBase {
     type: PieceType.Board,
     locationIds: string[],
 }
 
 export interface BoardLocation extends Nameable, Visible, HasData {
     adjacenctLocationIds: Record<string, string>, //Named adjacencies.  Names are used to allow similar traversal across multiple locations
-    position: BoardPosition,
+    position: BoardPosition,  // Relative to piece position
     imageId: string,
+}
+
+export interface BoardPosition {
+    x: number,
+    y: number,
 }
 
 export const EMPTY_BOARD_LOCATION: BoardLocation = {
     id: "",
     name: "",
-    visibleTo: ALL_PLAYERS,
+    visibleTo: NO_PLAYERS,
     adjacenctLocationIds: {},
     position: {
         x: 0,
@@ -75,13 +85,12 @@ export const EMPTY_BOARD_LOCATION: BoardLocation = {
     gameData: {}
 }
 
-export interface BoardPosition {
-    x: number,
-    y: number,
-}
 
+type Piece = BoardPiece | TextPiece | DrawingPiece | TimerPiece | CollectionPiece | SidedPiece | SimplePiece
 
-export const EMPTY_PIECE: Piece = {
+export default Piece
+
+export const EMPTY_PIECE: SimplePiece = {
     id: "",
     name: "",
     type: PieceType.Simple,

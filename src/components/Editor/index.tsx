@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { Redirect, RouteComponentProps } from 'react-router';
-import { Link } from 'react-router-dom';
+import DataSets from './DataSets';
 import PrototypeBasicInfo from './BasicInfo';
 import PrototypePieces from './Pieces';
 import PrototypeTimeline from './Timeline';
-import { prototypeConnect } from './scope';
-import DataSets from './DataSets';
-import { PrototypeContext, PrototypeProps } from './context';
+import { Link } from 'react-router-dom';
 import { Nav, NavItem } from 'reactstrap';
+import { prototypeConnect } from './scope';
+import { PrototypeContext, PrototypeProps } from './context';
+import { Redirect, RouteComponentProps } from 'react-router';
 
 export type RouteProps = { subpage: string | undefined, prototypeid: string, subitemid: string | undefined }
 

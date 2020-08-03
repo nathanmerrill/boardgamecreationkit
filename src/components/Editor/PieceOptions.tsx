@@ -1,14 +1,24 @@
 import * as React from 'react';
-import { PieceSet } from '../../store/types/PrototypeDefs';
-import { Select } from '../Parts/Select';
-import { PieceType } from '../../store/types/Pieces';
-import { GameImage, LiteralValue, DataType, EMPTY_LITERAL_VALUE } from '../../store/types/BaseTypes';
-import { ImageSelector } from '../Parts/ImageSelector';
-import { ImageDisplay } from '../Parts/ImageDisplay';
+import GameImage from '../../store/types/GameImage';
+import PieceSet from '../../store/types/Prototype/PieceSet';
+import Prototype from '../../store/types/Prototype';
+import {
+    Button,
+    Col,
+    Input,
+    InputGroup,
+    InputGroupAddon,
+    Label,
+    Row
+    } from 'reactstrap';
 import { Carousel } from 'react-responsive-carousel';
-import { PrototypeContext, PieceSetContext } from './context';
-import { InputGroup, Label, Input, InputGroupAddon, Button, Col, Row } from 'reactstrap';
-import { Prototype } from '../../store/types/Prototype';
+import { DataType, LiteralValue } from '../../store/types/BaseTypes';
+import { EMPTY_STRING } from '../../store/library/LiteralValues';
+import { ImageDisplay } from '../Parts/ImageDisplay';
+import { ImageSelector } from '../Parts/ImageSelector';
+import { PieceSetContext, PrototypeContext } from './context';
+import { PieceType } from '../../store/types/Piece';
+import { Select } from '../Parts/Select';
 
 
 export function readFromDataSet(pieceSet: PieceSet, prototype: Prototype, column: string, row: number): string {
@@ -191,7 +201,7 @@ function PieceDataInputs() {
                                 dataDef: {...pieceSet.dataDef, [dataName]: ""},
                                 piece: {
                                     ...pieceSet.piece,
-                                    gameData: {...pieceSet.piece.gameData, [dataName]: EMPTY_LITERAL_VALUE}
+                                    gameData: {...pieceSet.piece.gameData, [dataName]: EMPTY_STRING}
                                 }
                             })
                         }

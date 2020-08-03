@@ -1,12 +1,17 @@
 import * as React from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import { PieceSet } from '../../store/types/PrototypeDefs';
-import { ImageDisplay } from '../Parts/ImageDisplay';
-import PieceOptions, { readFromDataSet } from './PieceOptions';
-import { Col, Card, CardBody, Row } from 'reactstrap';
-import { PrototypeContext, PieceSetContext } from './context';
 import ForEach from '../Parts/ForEach';
-import { Prototype } from '../../store/types/Prototype';
+import PieceOptions, { readFromDataSet } from './PieceOptions';
+import PieceSet from '../../store/types/Prototype/PieceSet';
+import Prototype from '../../store/types/Prototype';
+import {
+    Card,
+    CardBody,
+    Col,
+    Row
+    } from 'reactstrap';
+import { ImageDisplay } from '../Parts/ImageDisplay';
+import { Link, useHistory } from 'react-router-dom';
+import { PieceSetContext, PrototypeContext } from './context';
 
 
 const CREATE_PIECE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">

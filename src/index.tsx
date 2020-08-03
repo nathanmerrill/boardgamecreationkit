@@ -1,17 +1,17 @@
-import 'bootstrap/dist/css/bootstrap.css';
-import "react-responsive-carousel/lib/styles/carousel.min.css";
-import 'jquery/dist/jquery'
-import 'bootstrap/dist/js/bootstrap'
-
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import { Provider } from 'react-redux';
+import App from './App';
+import configureStore from './store/configureStore';
+import registerServiceWorker from './registerServiceWorker';
 import { ConnectedRouter } from 'connected-react-router';
 import { createBrowserHistory } from 'history';
 import { loadState, saveState } from './store';
-import configureStore from './store/configureStore';
-import App from './App';
-import registerServiceWorker from './registerServiceWorker';
+import { Provider } from 'react-redux';
+import 'bootstrap/dist/css/bootstrap.css';
+import 'react-responsive-carousel/lib/styles/carousel.min.css';
+import 'jquery/dist/jquery';
+import 'bootstrap/dist/js/bootstrap';
+
 
 // Create browser history to use in the Redux store
 const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href') as string;

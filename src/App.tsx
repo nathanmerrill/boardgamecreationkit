@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Route, Switch } from 'react-router';
-import Layout from './components/Layout';
-import Home from './components/Home';
-import PrototypeSelect from './components/Editor/PrototypeSelect';
 import Editor from './components/Editor';
+import Home from './components/Home';
+import Layout from './components/Layout';
+import PrototypeSelect from './components/Editor/PrototypeSelect';
+import { Route, Switch } from 'react-router';
+import './custom.css';
 
-import './custom.css'
 
 export default () => (
     <Layout>

@@ -1,7 +1,8 @@
-import { connect } from 'react-redux';
-import * as Prototype from '../../store/types/Prototype';
+import { ActionCreatorWithPayload, bindActionCreators, createAction } from '@reduxjs/toolkit';
 import { ApplicationState } from '../../store';
-import { ActionCreatorWithPayload, createAction, bindActionCreators } from '@reduxjs/toolkit';
+import { connect } from 'react-redux';
+import { prototypeActions } from '../../store/types/Prototype';
+
 
 
 function scopeAction<P, T extends string>(actionCreator: ActionCreatorWithPayload<P, T>, scope: Record<string, any>): ActionCreatorWithPayload<P, T> {
@@ -38,7 +39,7 @@ export function prototypeConnect() {
                 applicationPrototypeId: ownProps.match.params.prototypeid
             };
 
-            var scopedActionCreators = scopeActions(Prototype.actions, scope);
+            var scopedActionCreators = scopeActions(prototypeActions, scope);
 
             return bindActionCreators(scopedActionCreators, dispatch);
         }

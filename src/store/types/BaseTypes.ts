@@ -1,4 +1,4 @@
-﻿// Fundamental types for game data
+﻿// ----- Common interfaces ---
 
 export interface HasId {
     id: string
@@ -9,7 +9,7 @@ export interface Nameable extends HasId {
 }
 
 export interface Visible {
-    visibleTo: GameValue, // Returns a list of players
+    visibleTo: LiteralValue | ScriptedValue, // Returns a list of players.  ScriptedValue cannot reference PlayerSelectedValue
 }
 
 // Custom key-value data that can be set by the designer (such as card suits), or by scripts during runtime
@@ -17,30 +17,43 @@ export interface HasData {
     gameData: Record<string, LiteralValue>
 }
 
-export interface GameValue {
-    type: ValueType,
+// ------ Game values ------
+// Game values are ID'd to allow in-game actions to reference them. 
+
+export type GameValue = ScriptedValue | LiteralValue | PlayerSelectedValue
+
+export interface ScriptedValue {
+    id?: string,
+    type: GameValueType.Function,
     returnType: DataType,
-}
-
-export interface ScriptedValue extends GameValue {
-    type: ValueType.Function,
     scriptId: string,
-    arguments: Record<string, ScriptedValue | LiteralValue>
+    arguments: Record<string, GameValue>
 }
 
-export interface LiteralValue extends GameValue {
-    type: ValueType.Literal,
-    value: string
+export interface LiteralValue {
+    id?: string,
+    type: GameValueType.Literal,
+    returnType: DataType,
+    value: string  // Must be a javascript literal
+}
+
+export interface PlayerSelectedValue {
+    id?: string,
+    type: GameValueType.PlayerSelected,
+    returnType: DataType,  // Cannot be Action, Move, GameState, Actions, Moves
+    allowedOptions: GameValue, // Return type must be the same dataType (multiple variant)
+    isValid: GameValue, // Return type must be boolean
 }
 
 export enum DataType {
     String, Number, Boolean, Piece, Player, Location, Side, Action, Move, GameState,
-    Strings, Numbers, Booleans, Pieces, Players, Locations, Sides, Actions, Moves,    
+    Strings, Numbers, Booleans, Pieces, Players, Locations, Sides, Actions, Moves,
 }
 
-export enum ValueType {
+export enum GameValueType {
     Literal,
-    Function
+    Function,
+    PlayerSelected
 }
 
 export interface GameScript extends Nameable {
@@ -49,19 +62,9 @@ export interface GameScript extends Nameable {
     returnType: DataType
 }
 
-export interface GameImage extends Nameable {
-    svg: string,
-}
-
-export const EMPTY_GAME_IMAGE: GameImage = {
-    id: "",
-    name: "",
-    svg: ""
-}
-
-
-export const EMPTY_LITERAL_VALUE: LiteralValue = {
-    type: ValueType.Literal,
-    returnType: DataType.String,
-    value: ""
+// Sharable scripts.  Gets decomposed into a GameScript and ScriptedValue
+export type LiteralScript = { 
+    returnType: DataType,
+    arguments: Record<string, LiteralValue | LiteralScript>
+    script: string,
 }

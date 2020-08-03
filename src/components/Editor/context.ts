@@ -1,12 +1,14 @@
-import React from "react";
-import { EMPTY_PROTOTYPE } from "../../store/types/Prototype";
-import * as Prototype from '../../store/types/Prototype';
-import { EMPTY_PIECE_SET, PieceSet } from "../../store/types/PrototypeDefs";
+import GameAction, { EMPTY_GAME_ACTION } from '../../store/types/GameAction';
+import PieceSet, { EMPTY_PIECE_SET } from '../../store/types/Prototype/PieceSet';
+import Prototype, { EMPTY_PROTOTYPE, prototypeActions } from '../../store/types/Prototype';
+import React from 'react';
 
 export type PrototypeProps =
-    Prototype.Prototype &
-    typeof Prototype.actions;
+    Prototype &
+    typeof prototypeActions;
 
-export const PrototypeContext = React.createContext<PrototypeProps>({...EMPTY_PROTOTYPE, ...Prototype.actions});
+export const PrototypeContext = React.createContext<PrototypeProps>({...EMPTY_PROTOTYPE, ...prototypeActions});
 
 export const PieceSetContext = React.createContext<PieceSet>({...EMPTY_PIECE_SET});
+
+export const ActionContext = React.createContext<GameAction>({...EMPTY_GAME_ACTION});

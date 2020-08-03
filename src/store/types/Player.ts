@@ -1,4 +1,4 @@
-﻿import { Nameable, HasData } from "./BaseTypes";
+﻿import { HasData, Nameable } from './BaseTypes';
 
 export enum WinStatus {
     Won,
@@ -6,7 +6,7 @@ export enum WinStatus {
     Undetermined
 }
 
-export interface Player extends Nameable, HasData {
+export default interface Player extends Nameable, HasData {
     position: number,
     pieceIds: string[],
     username: string,

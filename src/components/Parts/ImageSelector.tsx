@@ -1,10 +1,18 @@
 import * as React from 'react';
-import { GameImage, EMPTY_GAME_IMAGE } from '../../store/types/BaseTypes';
-import { nanoid } from '@reduxjs/toolkit';
-import { ImageDisplay } from './ImageDisplay';
-import { PrototypeContext } from '../Editor/context';
-import { Modal, ModalHeader, ModalBody, Button, ModalFooter, Input, Label } from 'reactstrap';
 import ForEach from './ForEach';
+import GameImage, { EMPTY_GAME_IMAGE } from '../../store/types/GameImage';
+import {
+    Button,
+    Input,
+    Label,
+    Modal,
+    ModalBody,
+    ModalFooter,
+    ModalHeader
+    } from 'reactstrap';
+import { ImageDisplay } from './ImageDisplay';
+import { nanoid } from '@reduxjs/toolkit';
+import { PrototypeContext } from '../Editor/context';
 
 
 export function ImageSelector(props: {onSelect: ((image: GameImage) => void)}){
