@@ -1,4 +1,6 @@
-﻿// ----- Common interfaces ---
+﻿import { data } from 'jquery';
+// ----- Common interfaces ---
+
 
 export interface HasId {
     id: string
@@ -9,7 +11,7 @@ export interface Nameable extends HasId {
 }
 
 export interface Visible {
-    visibleTo: LiteralValue | ScriptedValue, // Returns a list of players.  ScriptedValue cannot reference PlayerSelectedValue
+    visibleTo: CalculatedValue, //Returns a list of players
 }
 
 // Custom key-value data that can be set by the designer (such as card suits), or by scripts during runtime
@@ -20,29 +22,34 @@ export interface HasData {
 // ------ Game values ------
 // Game values are ID'd to allow in-game actions to reference them. 
 
-export type GameValue = ScriptedValue | LiteralValue | PlayerSelectedValue
+export type GameValue = ScriptedValue | SelectorValue | LiteralValue | PlayerSelectedValue
+export type CalculatedValue = ScriptedValue | SelectorValue | LiteralValue // ScriptedValue cannot reference PlayerSelectedValue
 
-export interface ScriptedValue {
+interface _GameValue {
     id?: string,
-    type: GameValueType.Function,
     returnType: DataType,
+}
+
+export interface SelectorValue extends _GameValue {
+    type: GameValueType.Selector,
+    selectorParts: string[],
+}
+
+export interface ScriptedValue extends _GameValue {
+    type: GameValueType.Function,
     scriptId: string,
     arguments: Record<string, GameValue>
 }
 
-export interface LiteralValue {
-    id?: string,
+export interface LiteralValue extends _GameValue {
     type: GameValueType.Literal,
-    returnType: DataType,
-    value: string  // Must be a javascript literal
+    value: string  // JS literal
 }
 
-export interface PlayerSelectedValue {
-    id?: string,
+export interface PlayerSelectedValue extends _GameValue {
     type: GameValueType.PlayerSelected,
-    returnType: DataType,  // Cannot be Action, Move, GameState, Actions, Moves
-    allowedOptions: GameValue, // Return type must be the same dataType (multiple variant)
-    isValid: GameValue, // Return type must be boolean
+    allowedOptions: CalculatedValue, // Return type must be the same dataType (multiple variant)
+    isValid: CalculatedValue, // Return type must be boolean
 }
 
 export enum DataType {
@@ -50,10 +57,58 @@ export enum DataType {
     Strings, Numbers, Booleans, Pieces, Players, Locations, Sides, Actions, Moves,
 }
 
+export namespace DataType{
+    export function Default(dataType: DataType){
+        if (IsPlural(dataType)){
+            return []
+        }
+        
+        switch (dataType){
+            case DataType.String: return ""
+            case DataType.Number: return 0
+            case DataType.Boolean: return false
+        }
+
+        return null
+    }
+
+    export function IsPlural(dataType: DataType){
+        return dataType.valueOf() >= DataType.Strings.valueOf()
+    }
+
+    export function ToPlural(dataType: DataType){
+        if (IsPlural(dataType) || dataType == DataType.GameState){
+            return dataType
+        }
+        
+        return dataType + DataType.Strings.valueOf();
+    }
+
+    export function ToSingular(dataType: DataType){
+        if (IsPlural(dataType)){
+            return dataType - DataType.Strings.valueOf();
+        }
+        
+        return dataType;
+    }
+
+    export function IsPrimitive(dataType: DataType){
+        switch (dataType){
+            case DataType.String:
+            case DataType.Number:
+            case DataType.Boolean:
+                return true;
+        }
+        
+        return false;
+    }
+}
+
 export enum GameValueType {
-    Literal,
-    Function,
-    PlayerSelected
+    Literal,  // JS literal
+    Selector, // Select by object path (e.g. board.locations.deck.top)
+    Function, // JS script
+    PlayerSelected  // Chosen during play
 }
 
 export interface GameScript extends Nameable {

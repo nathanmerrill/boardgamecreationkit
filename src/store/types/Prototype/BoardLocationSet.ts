@@ -1,4 +1,4 @@
-import { BoardLocation, EMPTY_BOARD_LOCATION } from '../Piece';
+import { BoardPiece } from '../Piece';
 import { Nameable } from '../BaseTypes';
 
 
@@ -6,7 +6,7 @@ export default interface BoardLocationSet extends Nameable {
     boardPieceId: string, // The board to add these locations to
     datasetId: string,
     copies: number,
-    boardLocation: BoardLocation,
+    boardLocation: BoardPiece.Location,
     adjacencyDef: Record<string, string>
     positionXDef: string,
     positionYDef: string,
@@ -23,5 +23,5 @@ export const EMPTY_BOARD_LOCATION_SET: BoardLocationSet = {
     positionXDef: "",
     positionYDef: "",
     imageDef: "",
-    boardLocation: EMPTY_BOARD_LOCATION,
+    boardLocation: BoardPiece.Location.EMPTY,
 }

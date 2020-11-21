@@ -1,8 +1,8 @@
 import * as React from 'react';
-import GameAction from '../../store/types/GameAction';
-import { ActionContext, PrototypeContext } from './context';
 import { Col, Input, Label, Row } from 'reactstrap';
 import { DataType, GameValue, GameValueType, ScriptedValue } from '../../store/types/BaseTypes';
+import { GameAction, GamePhase } from '../../store/types/Timeline';
+import { PrototypeContext } from './context';
 import { Select } from '../Parts/Select';
 
 
@@ -15,11 +15,12 @@ function AvailableSubactions(){
 function GameValueView(props: {value: GameValue}){
     const returnType = props.value.returnType
     const allowedValueTypes: Record<string, GameValueType> = {}
-    if (returnType in [DataType.String, DataType.Strings, DataType.Number, DataType.Number, DataType.Boolean, DataType.Booleans]){
+    if (DataType.IsPrimitive(DataType.ToSingular(returnType))){
         allowedValueTypes["Literal"] = GameValueType.Literal
     }
-
-    allowedValueTypes["Part"] = GameValueType.Function
+    
+    allowedValueTypes["Piece"] = GameValueType.Selector
+    allowedValueTypes["Script"] = GameValueType.Function
     if (!(returnType in [DataType.Action, DataType.Move, DataType.GameState, DataType.Actions, DataType.Moves])){
         allowedValueTypes["Player Selected"] = GameValueType.PlayerSelected
     }
@@ -31,25 +32,14 @@ function GameValueView(props: {value: GameValue}){
                 <React.Fragment>
                     <Label for="valueType">Source</Label>
                     <Select id="gameValueType" values={allowedValueTypes} selectedValue={props.value.type} onChange={(selected) => {
-                        if (selected === null) {
+                        if (selected !== null) {
                             const additionalProps: any = {}
                             if (selected === GameValueType.Function){
                                 additionalProps.arguments = {}
                                 additionalProps.scriptId = ""                                
                             }
                             if (selected === GameValueType.Literal){
-                                switch (returnType){
-                                    case DataType.Number:
-                                        additionalProps.value = "0"
-                                    case DataType.String:
-                                        additionalProps.value = ""
-                                    case DataType.Boolean:
-                                        additionalProps.value = "false"
-                                    case DataType.Numbers:
-                                    case DataType.Booleans:
-                                    case DataType.Strings:
-                                        additionalProps.value = "[]"
-                                }                              
+                                additionalProps.value = JSON.stringify(DataType.Default(returnType))
                             }
                             if (selected === GameValueType.PlayerSelected){
                                 additionalProps.allowedOptions = {
@@ -57,7 +47,7 @@ function GameValueView(props: {value: GameValue}){
                                     returnType: DataType.Pieces,
                                     value: "[]"
                                 }
-                                additionalProps.                
+                                additionalProps.         
                             }
                             const newValue: GameValue = {
 
@@ -84,21 +74,23 @@ function ActionView(props: {action: GameAction}){
     )
 }
 
+function PhaseView(props: {phase: GamePhase}){
+    
+}
+
 
 export default function Timeline() {
     const prototype = React.useContext(PrototypeContext)
-    const rootAction = prototype.allActions[prototype.rootAction]
+    
+    const startPhase = prototype.allPhases[prototype.startPhase]
     
     return (
-        <ActionContext.Provider value={rootAction}>
-            <Row>
-                <Col xs={8}>
-                    <ActionView action={rootAction} />
-                </Col>
-                <Col xs={4}>
-                    <AvailableSubactions />
-                </Col>
-            </Row>
-        </ActionContext.Provider>
+        <Row>
+            <Col xs={8}>
+            </Col>
+            <Col xs={4}>
+                <AvailableSubactions />
+            </Col>
+        </Row>
     );
 }

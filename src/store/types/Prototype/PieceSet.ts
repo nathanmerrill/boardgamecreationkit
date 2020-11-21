@@ -1,4 +1,4 @@
-import Piece, { EMPTY_PIECE, PieceSide } from '../Piece';
+import Piece, { SidedPiece } from '../Piece';
 import { Nameable } from '../BaseTypes';
 
 
@@ -17,7 +17,7 @@ export const EMPTY_PIECE_SET: PieceSet = {
     name: "",
     dataSetId: "",
     copies: 1,
-    piece: EMPTY_PIECE,
+    piece: Piece.EMTPY,
     nameDef: "",
     dataDef: {},
     imageDef: "",
@@ -25,7 +25,7 @@ export const EMPTY_PIECE_SET: PieceSet = {
 }
 
 export interface SideDef extends Nameable {
-    side: PieceSide,
+    side: SidedPiece.Side,
     imageDef: string,
     visibleDef: string,
 }

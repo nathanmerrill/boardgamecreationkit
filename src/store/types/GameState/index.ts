@@ -1,26 +1,21 @@
 ﻿import LocationState from './LocationState';
 import Player from '../Player';
-import PlayerMove from './PlayerMove';
 import { createReducer, Reducer } from '@reduxjs/toolkit';
 import { HasData, HasId } from '../BaseTypes';
 import { PieceState } from './PieceState';
 
-// Game flow is as follows:
-// The top action of the actionStack is popped to currentAction
-// The action is performed. If the action requires a PlayerSelected value, it is added as an available move
-// After all values are filled, the action is performed, and the next item on the stack is popped
-// Gameplay continues until finished is true or the stack is empty
+// Game flow is a finite state machine.
+// We start at the starting stage (state), then actions move us from stage to stage.
+// An action can be deemed automatic, which will cause the action to occur without any player input.
+// Otherwise, players will choose an action (if there are choices), and the perform the action
+// The game is finished when an end stage is reached
 export default interface GameState extends HasData, HasId {
     id: string,
     gameId: string,
-    started: boolean,
     allPlayers: Record<string, Player> // Keyed by playerId
-    currentAction: string,
-    actionStack: string[] 
-    availableMoves: PlayerMove[]
+    currentStage: string,
     pieceStates: Record<string, PieceState> // Keyed by pieceId    
     locationStates: Record<string, LocationState> // Keyed by locationId
-    finished: boolean,
     seed: object | null,
 }
 
@@ -28,14 +23,10 @@ export default interface GameState extends HasData, HasId {
 export const EMPTY_GAMESTATE: GameState = {
     id: "",
     gameId: "",
-    started: false,
     allPlayers: {},
-    currentAction: "",
-    actionStack: [],
-    availableMoves: [],
+    currentStage: "",
     pieceStates: {},
     locationStates: {},
-    finished: false,
     seed: null,
     gameData: {}
 }

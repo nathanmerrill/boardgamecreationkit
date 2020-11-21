@@ -1,8 +1,8 @@
-﻿import GameAction from './GameAction';
-import GameImage from './GameImage';
+﻿import GameImage from './GameImage';
 import GameState, { EMPTY_GAMESTATE } from './GameState';
-import Piece, { BoardLocation, PieceSide } from './Piece';
+import Piece, { BoardPiece, SidedPiece } from './Piece';
 import { createReducer } from '@reduxjs/toolkit';
+import { GameAction, GamePhase } from './Timeline';
 import { GameScript, Nameable } from './BaseTypes';
 import { Reducer } from 'redux';
 
@@ -13,26 +13,28 @@ export default interface Game extends Nameable {
     updatedAt: string,
     allowedPlayerCounts: number[],
     initialState: GameState,
-    rootAction: string,
+    startPhase: string,
 
+    allPhases: Record<string, GamePhase>
     allPieces: Record<string, Piece>
     allActions: Record<string, GameAction>
-    allSides: Record<string, PieceSide>
-    allLocations: Record<string, BoardLocation>
+    allSides: Record<string, SidedPiece.Side>
+    allLocations: Record<string, BoardPiece.Location>
     allImages: Record<string, GameImage>
     allScripts: Record<string, GameScript>
 }
-
+    
 export const EMPTY_GAME: Game = {
     id: "",
     name: "",
     description: "",
     authorUsername: "",
     updatedAt: "",
-    rootAction: "",
+    startPhase: "",
     allowedPlayerCounts: [],
     initialState: EMPTY_GAMESTATE,
 
+    allPhases: {},
     allPieces: {},
     allActions: {},
     allSides: {},

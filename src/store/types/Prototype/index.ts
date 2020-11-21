@@ -1,6 +1,5 @@
 ﻿import BoardLocationSet from './BoardLocationSet';
 import Game, { EMPTY_GAME } from '../Game';
-import GameAction from '../GameAction';
 import GameImage from '../GameImage';
 import Piece from '../Piece';
 import PieceSet, { EMPTY_PIECE_SET } from './PieceSet';
@@ -35,7 +34,6 @@ const actions = {
     setPieceSetProps: createAction<Partial<PieceSet>&{id: string}>("SET_PIECE_SET_PROPS"),
     setPieceSetPieceProps: createAction<Partial<Piece>&{id: string}>("SET_PIECE_SET_PIECE_PROPS"),
     setDataSetProps: createAction<Partial<DataSet>&{id: string}>("SET_DATA_SET_PROPS"),
-    setActionProps: createAction<Partial<GameAction>&{id: string}>("SET_GAME_ACTION_PROPS"),
 }
 
 export const prototypeActions = actions
@@ -70,12 +68,6 @@ export const reducePrototype: Reducer<Prototype> = createReducer(EMPTY_PROTOTYPE
             state.allDataSets[action.payload.id] = {
                 ...state.allDataSets[action.payload.id],
                 ...action.payload,
-            }
-        })
-        .addCase(actions.setActionProps, (state, action) => {
-            state.allActions[action.payload.id] = {
-                ...state.allDataSets[action.payload.id] as any,
-                ...action.payload
             }
         })
 )
