@@ -1,23 +1,16 @@
 import * as React from 'react';
-import GameImage from '../../store/types/GameImage';
+import DataType from '../../store/types/data/DataType';
+import GameImage from '../../store/types/entities/GameImage';
 import PieceSet from '../../store/types/Prototype/PieceSet';
 import Prototype from '../../store/types/Prototype';
-import {
-    Button,
-    Col,
-    Input,
-    InputGroup,
-    InputGroupAddon,
-    Label,
-    Row
-    } from 'reactstrap';
+import { Button, Col, Input, InputGroup, InputGroupAddon, Label, Row } from 'reactstrap';
 import { Carousel } from 'react-responsive-carousel';
-import { DataType, LiteralValue } from '../../store/types/BaseTypes';
+import { DataSourceType, Literal } from '../../store/types/data/DataSource';
 import { EMPTY_STRING } from '../../store/library/LiteralValues';
 import { ImageDisplay } from '../Parts/ImageDisplay';
 import { ImageSelector } from '../Parts/ImageSelector';
 import { PieceSetContext, PrototypeContext } from './context';
-import { PieceType } from '../../store/types/Piece';
+import { PieceType } from '../../store/types/entities/Piece';
 import { Select } from '../Parts/Select';
 
 
@@ -150,7 +143,7 @@ function PieceDataInput(props: {dataName: string}) {
     const prototype = React.useContext(PrototypeContext)
     const pieceSet = React.useContext(PieceSetContext)
     const gameData = pieceSet.piece.gameData
-    const dataValue: LiteralValue = gameData[props.dataName]
+    const dataValue: Literal = gameData[props.dataName]
 
     const dataTypeSubset: Record<string, DataType> = Object.keys(DataType)
         .slice(0,3)

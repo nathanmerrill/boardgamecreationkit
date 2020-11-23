@@ -1,4 +1,4 @@
-import { Nameable } from './BaseTypes';
+import { Nameable } from '../Interfaces';
 
 export default interface GameImage extends Nameable {
     svg: string,

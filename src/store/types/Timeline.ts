@@ -1,10 +1,11 @@
-import { CalculatedValue, DataType, GameValueType, Nameable, ScriptedValue } from './BaseTypes';
-
+import DataType from './data/DataType';
+import { CalculatedDataSource, DataSourceType, ScriptedDataSource } from './data/DataSource';
+import { Nameable } from './Interfaces';
 
 export interface GameAction extends Nameable {
-    newGameState: ScriptedValue  // Must return GameState
+    newGameState: ScriptedDataSource  // Must return GameState
     automatic: boolean
-    available: CalculatedValue // Returns boolean
+    available: CalculatedDataSource // Returns boolean
 }
 
 export namespace GameAction {
@@ -13,12 +14,12 @@ export namespace GameAction {
         name: "",
         automatic: false,
         available: {
-            type: GameValueType.Literal,
+            sourceType: DataSourceType.Literal,
             returnType: DataType.Boolean,
             value: "true",
         },
         newGameState: {
-            type: GameValueType.Function,
+            sourceType: DataSourceType.Function,
             returnType: DataType.GameState,
             scriptId: "",
             arguments: {}

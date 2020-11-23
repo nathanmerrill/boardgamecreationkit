@@ -1,9 +1,9 @@
-import { BoardPiece } from '../Piece';
-import { LiteralValue } from '../BaseTypes';
+import { BoardLocation, BoardPiece } from '../entities/Piece';
+import { Literal } from '../data/DataSource';
 
 export default interface LocationState {
     locationId: string,
-    gameData?: Record<string, LiteralValue> // Overrides/extends existing data
-    position?: BoardPiece.Location,
+    gameData?: Record<string, Literal> // Overrides/extends existing data
+    position?: BoardLocation,
 
 }

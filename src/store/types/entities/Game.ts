@@ -1,9 +1,9 @@
 ﻿import GameImage from './GameImage';
-import GameState, { EMPTY_GAMESTATE } from './GameState';
-import Piece, { BoardPiece, SidedPiece } from './Piece';
+import GameState, { EMPTY_GAMESTATE } from '../GameState';
+import Piece, { BoardLocation, BoardPiece, PieceSide, SidedPiece } from './Piece';
 import { createReducer } from '@reduxjs/toolkit';
-import { GameAction, GamePhase } from './Timeline';
-import { GameScript, Nameable } from './BaseTypes';
+import { GameAction, GamePhase } from '../Timeline';
+import { GameScript, Nameable } from '../Interfaces';
 import { Reducer } from 'redux';
 
 // Data that does not change during gameplay
@@ -18,8 +18,8 @@ export default interface Game extends Nameable {
     allPhases: Record<string, GamePhase>
     allPieces: Record<string, Piece>
     allActions: Record<string, GameAction>
-    allSides: Record<string, SidedPiece.Side>
-    allLocations: Record<string, BoardPiece.Location>
+    allSides: Record<string, PieceSide>
+    allLocations: Record<string, BoardLocation>
     allImages: Record<string, GameImage>
     allScripts: Record<string, GameScript>
 }

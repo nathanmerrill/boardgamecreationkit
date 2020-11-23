@@ -1,7 +1,7 @@
-import Game from './types/Game';
+import Game from './types/entities/Game';
 import GameScripts from './library/ScriptLibrary';
 import GameState, { reduceGameState } from './types/GameState';
-import Player from './types/Player';
+import Player from './types/entities/Player';
 import Prototype, { EMPTY_PROTOTYPE, reducePrototype } from './types/Prototype';
 import { createAction, createReducer, nanoid } from '@reduxjs/toolkit';
 import { literalScriptToAction } from './library/lib';

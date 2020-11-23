@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { isObject } from 'util';
-import { Nameable } from '../../store/types/BaseTypes';
+import { Nameable } from '../../store/types/Interfaces';
 
 
 export function Select<T = string | string[] | number | Nameable>(props: {values: { [s: string]: T } | ArrayLike<T> , onChange: (selected: T | null) => void, selectedValue: T | null | string, disabled?: boolean, noneOption?: string, id?: string}) {

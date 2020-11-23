@@ -1,11 +1,12 @@
 ﻿import BoardLocationSet from './BoardLocationSet';
-import Game, { EMPTY_GAME } from '../Game';
-import GameImage from '../GameImage';
-import Piece from '../Piece';
+import Game, { EMPTY_GAME } from '../entities/Game';
+import GameImage from '../entities/GameImage';
+import Piece from '../entities/Piece';
 import PieceSet, { EMPTY_PIECE_SET } from './PieceSet';
 import { createAction, createReducer } from '@reduxjs/toolkit';
 import { DataSet, EMPTY_DATASET } from './DataSet';
 import { fillData } from '../../../lib';
+import { GameAction } from '../Timeline';
 import { Reducer } from 'redux';
 
 
@@ -34,6 +35,7 @@ const actions = {
     setPieceSetProps: createAction<Partial<PieceSet>&{id: string}>("SET_PIECE_SET_PROPS"),
     setPieceSetPieceProps: createAction<Partial<Piece>&{id: string}>("SET_PIECE_SET_PIECE_PROPS"),
     setDataSetProps: createAction<Partial<DataSet>&{id: string}>("SET_DATA_SET_PROPS"),
+    setActionProps: createAction<Partial<GameAction>&{id: string}>("SET_ACTION_PROPS"),
 }
 
 export const prototypeActions = actions
@@ -70,4 +72,8 @@ export const reducePrototype: Reducer<Prototype> = createReducer(EMPTY_PROTOTYPE
                 ...action.payload,
             }
         })
+        .addCase(actions.setActionProps, (state, action) => { state.allActions[action.payload.id] = {
+            ...state.allActions[action.payload.id],
+            ...action.payload
+        }})
 )

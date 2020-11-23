@@ -1,7 +1,7 @@
 ﻿import LocationState from './LocationState';
-import Player from '../Player';
+import Player from '../entities/Player';
 import { createReducer, Reducer } from '@reduxjs/toolkit';
-import { HasData, HasId } from '../BaseTypes';
+import { HasData, HasId } from '../Interfaces';
 import { PieceState } from './PieceState';
 
 // Game flow is a finite state machine.

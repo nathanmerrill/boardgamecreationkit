@@ -1,4 +1,4 @@
-import { Nameable } from '../BaseTypes';
+import { Nameable } from '../Interfaces';
 
 export interface DataSet extends Nameable {
     columns: string[]

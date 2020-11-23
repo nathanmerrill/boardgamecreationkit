@@ -1,5 +1,5 @@
-import Piece, { SidedPiece } from '../Piece';
-import { Nameable } from '../BaseTypes';
+import Piece, { EMPTY_PIECE, PieceSide } from '../entities/Piece';
+import { Nameable } from '../Interfaces';
 
 
 export default interface PieceSet extends Nameable {
@@ -17,7 +17,7 @@ export const EMPTY_PIECE_SET: PieceSet = {
     name: "",
     dataSetId: "",
     copies: 1,
-    piece: Piece.EMTPY,
+    piece: EMPTY_PIECE,
     nameDef: "",
     dataDef: {},
     imageDef: "",
@@ -25,7 +25,7 @@ export const EMPTY_PIECE_SET: PieceSet = {
 }
 
 export interface SideDef extends Nameable {
-    side: SidedPiece.Side,
+    side: PieceSide,
     imageDef: string,
     visibleDef: string,
 }

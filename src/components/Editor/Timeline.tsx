@@ -1,6 +1,7 @@
 import * as React from 'react';
+import DataSource, { DataSourceType } from '../../store/types/data/DataSource';
+import DataType, { GetDefaultDataType, IsPrimitive, ToSingular } from '../../store/types/data/DataType';
 import { Col, Input, Label, Row } from 'reactstrap';
-import { DataType, GameValue, GameValueType, ScriptedValue } from '../../store/types/BaseTypes';
 import { GameAction, GamePhase } from '../../store/types/Timeline';
 import { PrototypeContext } from './context';
 import { Select } from '../Parts/Select';
@@ -12,17 +13,17 @@ function AvailableSubactions(){
     )
 }
 
-function GameValueView(props: {value: GameValue}){
-    const returnType = props.value.returnType
-    const allowedValueTypes: Record<string, GameValueType> = {}
-    if (DataType.IsPrimitive(DataType.ToSingular(returnType))){
-        allowedValueTypes["Literal"] = GameValueType.Literal
+function DataSourceView(props: {dataSource: DataSource}){
+    const returnType = props.dataSource.returnType
+    const allowedValueTypes: Record<string, DataSourceType> = {}
+    if(IsPrimitive(ToSingular(returnType))){
+        allowedValueTypes["Literal"] = DataSourceType.Literal
     }
     
-    allowedValueTypes["Piece"] = GameValueType.Selector
-    allowedValueTypes["Script"] = GameValueType.Function
+    allowedValueTypes["Piece"] = DataSourceType.Selector
+    allowedValueTypes["Script"] = DataSourceType.Function
     if (!(returnType in [DataType.Action, DataType.Move, DataType.GameState, DataType.Actions, DataType.Moves])){
-        allowedValueTypes["Player Selected"] = GameValueType.PlayerSelected
+        allowedValueTypes["Player Selected"] = DataSourceType.PlayerSelected
     }
     
 
@@ -31,29 +32,28 @@ function GameValueView(props: {value: GameValue}){
             { Object.keys(allowedValueTypes).length > 1 &&
                 <React.Fragment>
                     <Label for="valueType">Source</Label>
-                    <Select id="gameValueType" values={allowedValueTypes} selectedValue={props.value.type} onChange={(selected) => {
+                    <Select id="gameValueType" values={allowedValueTypes} selectedValue={props.dataSource.sourceType} onChange={(selected) => {
                         if (selected !== null) {
                             const additionalProps: any = {}
-                            if (selected === GameValueType.Function){
+                            if (selected === DataSourceType.Function){
                                 additionalProps.arguments = {}
                                 additionalProps.scriptId = ""                                
                             }
-                            if (selected === GameValueType.Literal){
-                                additionalProps.value = JSON.stringify(DataType.Default(returnType))
+                            if (selected === DataSourceType.Literal){
+                                additionalProps.value = JSON.stringify(GetDefaultDataType(returnType))
                             }
-                            if (selected === GameValueType.PlayerSelected){
+                            if (selected === DataSourceType.PlayerSelected){
                                 additionalProps.allowedOptions = {
-                                    type: GameValueType.Literal,
+                                    type: DataSourceType.Literal,
                                     returnType: DataType.Pieces,
                                     value: "[]"
-                                }
-                                additionalProps.         
+                                }        
                             }
-                            const newValue: GameValue = {
+                            const newSource: DataSource = {
 
-                                ...props.value,
+                                ...props.dataSource,
                             }
-                            newValue.type = selected
+                            newSource.sourceType = selected
                         }
                     }}></Select>
                 </React.Fragment>

@@ -1,15 +1,7 @@
 import * as React from 'react';
 import ForEach from './ForEach';
-import GameImage, { EMPTY_GAME_IMAGE } from '../../store/types/GameImage';
-import {
-    Button,
-    Input,
-    Label,
-    Modal,
-    ModalBody,
-    ModalFooter,
-    ModalHeader
-    } from 'reactstrap';
+import GameImage, { EMPTY_GAME_IMAGE } from '../../store/types/entities/GameImage';
+import { Button, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader } from 'reactstrap';
 import { ImageDisplay } from './ImageDisplay';
 import { nanoid } from '@reduxjs/toolkit';
 import { PrototypeContext } from '../Editor/context';

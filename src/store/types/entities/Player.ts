@@ -1,4 +1,4 @@
-﻿import { HasData, Nameable } from './BaseTypes';
+﻿import { HasData, Nameable } from '../Interfaces';
 
 export enum WinStatus {
     Won,

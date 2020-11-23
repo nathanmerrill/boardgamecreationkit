@@ -1,25 +1,27 @@
-﻿import { DataType, GameValueType, LiteralValue } from '../types/BaseTypes';
+﻿import DataType from '../types/data/DataType';
+import { DataSourceType, Literal } from '../types/data/DataSource';
 
-export const TRUE: LiteralValue = {
-    type: GameValueType.Literal,
+
+export const TRUE: Literal = {
+    sourceType: DataSourceType.Literal,
     value: "true",
     returnType: DataType.Boolean,
 }
 
-export const FALSE: LiteralValue = {
-    type: GameValueType.Literal,
+export const FALSE: Literal = {
+    sourceType: DataSourceType.Literal,
     value: "false",
     returnType: DataType.Boolean,
 }
 
-export const NO_PLAYERS: LiteralValue = {
-    type: GameValueType.Literal,
+export const NO_PLAYERS: Literal = {
+    sourceType: DataSourceType.Literal,
     value: "[]",
     returnType: DataType.Players,
 }
 
-export const EMPTY_STRING: LiteralValue = {
-    type: GameValueType.Literal,
+export const EMPTY_STRING: Literal = {
+    sourceType: DataSourceType.Literal,
     returnType: DataType.String,
     value: ""
 }

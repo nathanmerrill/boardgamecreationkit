@@ -1,12 +1,9 @@
-import GameAction from '../types/GameAction';
+import DataType from '../types/data/DataType';
 import Prototype from '../types/Prototype';
-import {
-    GameScript,
-    GameValueType,
-    LiteralScript,
-    LiteralValue,
-    ScriptedValue
-    } from '../types/BaseTypes';
+import { DataSourceType, Literal, ScriptedDataSource } from '../types/data/DataSource';
+import { GameAction } from '../types/Timeline';
+import { GameScript } from '../types/Interfaces';
+import { LiteralScript } from '../types/Prototype/LiteralScript';
 import { mapObject } from '../../lib';
 import { nanoid } from '@reduxjs/toolkit';
 
@@ -20,15 +17,15 @@ function literalScriptToGameScript(name: string, literalScript: LiteralScript): 
     }
 }
 
-function literalScriptToScriptedValue(name: string, literalScript: LiteralScript): {value: ScriptedValue, scripts: GameScript[]} {
+function literalScriptToDataSource(name: string, literalScript: LiteralScript): {dataSource: ScriptedDataSource, scripts: GameScript[]} {
     const script = literalScriptToGameScript(name, literalScript)
     
-    const argumentDependencies = mapObject(literalScript.arguments, (argument: LiteralScript | LiteralValue, argName: string) => {
+    const argumentDependencies = mapObject(literalScript.arguments, (argument: LiteralScript | Literal, argName: string) => {
         if ("script" in argument){
-            return literalScriptToScriptedValue(argName, argument as LiteralScript)
+            return literalScriptToDataSource(argName, argument as LiteralScript)
         } else {
             return {
-                value: argument as LiteralValue,
+                dataSource: argument as Literal,
                 scripts: [],
             }
         }
@@ -38,10 +35,10 @@ function literalScriptToScriptedValue(name: string, literalScript: LiteralScript
     scripts.push(script)
 
     return{
-        value: {
-            type: GameValueType.Function,
+        dataSource: {
+            sourceType: DataSourceType.Function,
             scriptId: script.id,
-            arguments: mapObject(argumentDependencies, (a) => a.value),
+            arguments: mapObject(argumentDependencies, (a) => a.dataSource),
             returnType: literalScript.returnType
         },
         scripts: scripts
@@ -50,12 +47,18 @@ function literalScriptToScriptedValue(name: string, literalScript: LiteralScript
 
 export function literalScriptToAction(name: string, literalScript: LiteralScript, prototype: Prototype): {action: GameAction, prototype: Prototype, scripts: GameScript[]}{
     
-    let {value, scripts} = literalScriptToScriptedValue(name, literalScript)
+    let {dataSource, scripts} = literalScriptToDataSource(name, literalScript)
 
     let action: GameAction = {
         id: nanoid(),
         name: name,
-        newGameState: value
+        newGameState: dataSource,
+        automatic: false,
+        available: {
+            sourceType: DataSourceType.Literal,
+            value: "true",
+            returnType: DataType.Boolean            
+        }
     }
 
     return {
