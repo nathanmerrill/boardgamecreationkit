@@ -9,3 +9,4 @@ export type PrototypeProps =
 export const PrototypeContext = React.createContext<PrototypeProps>({...EMPTY_PROTOTYPE, ...prototypeActions});
 
 export const PieceSetContext = React.createContext<PieceSet>({...EMPTY_PIECE_SET});
+export const TableSelectionContext = React.createContext<{row: number, column: number}>({row: 0, column: 0});

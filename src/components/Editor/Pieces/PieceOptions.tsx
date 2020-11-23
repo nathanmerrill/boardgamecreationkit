@@ -1,15 +1,13 @@
 import * as React from 'react';
-import DataType from '../../../store/types/data/DataType';
+import DataType, { IsPrimitive } from '../../../store/types/data/DataType';
 import GameImage from '../../../store/types/entities/GameImage';
 import PieceSet, { GetDataSet } from '../../../store/types/Prototype/PieceSet';
 import Prototype from '../../../store/types/Prototype';
 import { Button, Col, Input, InputGroup, InputGroupAddon, Label, Row } from 'reactstrap';
-import { Carousel } from 'react-responsive-carousel';
-import { DataSourceType, Literal } from '../../../store/types/data/DataSource';
 import { EMPTY_STRING } from '../../../store/library/LiteralValues';
-import { ImageDisplay } from '../../Parts/ImageDisplay';
 import { ImageSelector } from '../../Parts/ImageSelector';
-import { PieceSetContext, PrototypeContext } from '../context';
+import { Literal } from '../../../store/types/data/DataSource';
+import { PieceSetContext, PrototypeContext, TableSelectionContext } from '../context';
 import { PieceType } from '../../../store/types/entities/Piece';
 import { Select } from '../../Parts/Select';
 
@@ -33,19 +31,12 @@ export function readFromDataSet(pieceSet: PieceSet, prototype: Prototype, column
     return dataSet.data[dataRow][dataColumn] || ""
 }
 
-function DataSetInput(props: {label: string, selectedColumn: string, onColumnChange: (column: string) => void, children: React.ReactNode, renderValue: (value: string) => React.ReactNode}){
+function DataSetInput(props: {label: string, selectedColumn: string, onColumnChange: (column: string) => void, children: React.ReactNode}){
     const prototype = React.useContext(PrototypeContext)
     const pieceSet = React.useContext(PieceSetContext)
+    const selection = React.useContext(TableSelectionContext)
     const dataSetId = pieceSet.dataSetId;
     const dataSet = GetDataSet(pieceSet, prototype)
-    const dataValue: Array<string> = [];
-    dataValue[0] = ""
-
-    if (props.selectedColumn){
-        for (var i = 0; i < dataSet.data.length; i++){
-            dataValue[i] = readFromDataSet(pieceSet, prototype, props.selectedColumn, i)
-        }
-    }
 
     const usingDataSets = !!dataSetId
     const hasSelectedColumn = usingDataSets && !!props.selectedColumn
@@ -53,20 +44,10 @@ function DataSetInput(props: {label: string, selectedColumn: string, onColumnCha
     let dataValueInput = props.children
 
     if (hasSelectedColumn){
-        if (dataValue.length === 1){
-        } else {
-            dataValueInput = (
-                <Carousel showThumbs={false} showIndicators={false} showStatus={false}>
-                    {dataValue.map((value, index) => {
-                        return (
-                            <div key={"carousel-"+props.label+index}>
-                                {props.renderValue(value)}
-                            </div>
-                        )
-                    })}
-                </Carousel>
-            )
-        }
+        const dataValue = readFromDataSet(pieceSet, prototype, props.selectedColumn, selection.row);
+        dataValueInput = (
+            <input type="text" className="form-control" disabled value={dataValue} />
+        )
     }
 
     return (
@@ -78,7 +59,7 @@ function DataSetInput(props: {label: string, selectedColumn: string, onColumnCha
             </Row>
             <Row>
                 <Col xs={6} className="pt-0">
-                    <small>Dataset Row</small>
+                    <small>Column</small>
                     <Select values={dataSet.columns} selectedValue={props.selectedColumn} disabled={!usingDataSets} noneOption="None" onChange={(e) =>{
                         if (e){
                             const index = dataSet.columns.indexOf(e)
@@ -90,7 +71,7 @@ function DataSetInput(props: {label: string, selectedColumn: string, onColumnCha
                     }}/>
                 </Col>
                 <Col xs={6} className="pt-0">
-                    <small>{hasSelectedColumn ? "Sample" : "Constant"} Value</small>
+                    <small>Value</small>
                     { dataValueInput }
                 </Col>
             </Row>
@@ -106,10 +87,6 @@ function PieceNameInput() {
     return (
         <DataSetInput label="Piece names" selectedColumn={pieceSet.nameDef} onColumnChange={(e) =>
                 prototype.setPieceSetProps({id: pieceSet.id, nameDef: e})
-            }
-            renderValue={(value: string) =>
-                <span>{value}</span>
-                
             }
         >
             <input type="text" className="form-control" value={pieceSet.name} onChange={(e) =>
@@ -129,9 +106,6 @@ function PieceImageInput() {
             <DataSetInput label="Piece images" selectedColumn={pieceSet.imageDef} onColumnChange={(e) =>
                 prototype.setPieceSetProps({id: pieceSet.id, imageDef: e})
             }
-                renderValue={(value: string) =>
-                    <ImageDisplay image={value} size={50} />
-                }
             >
                 <button type="button" className="btn btn-secondary" data-toggle="modal" data-target="#imageModal">Select Image</button>
             </DataSetInput>
@@ -146,8 +120,9 @@ function PieceDataInput(props: {dataName: string}) {
     const dataValue: Literal = gameData[props.dataName]
 
     const dataTypeSubset: Record<string, DataType> = Object.keys(DataType)
-        .slice(0,3)
-        .reduce((record, key) => {return {...record, [key]: DataType[Number(key)]}}, {})
+        .map(Number)
+        .filter(IsPrimitive)
+        .reduce((record, key) => {return {...record, [key]: DataType[key]}}, {})
 
     const typeSelector = <Select values={dataTypeSubset} selectedValue={dataValue.returnType} onChange={(selected) => {
         if (selected){
@@ -158,14 +133,7 @@ function PieceDataInput(props: {dataName: string}) {
     return (
         <DataSetInput label={props.dataName} selectedColumn={pieceSet.dataDef[props.dataName]} onColumnChange={(e) =>
                 prototype.setPieceSetProps({id: pieceSet.id, dataDef: {...pieceSet.dataDef, [props.dataName]: e}})
-        }
-            renderValue={(value: string) => 
-            <React.Fragment>
-                <input type="text" className="form-control" disabled value={value} />
-                {typeSelector} 
-            </React.Fragment>
-            }
-        >
+        }>
             <input type="text" className="form-control" value={dataValue.value} onChange={(e) =>{
                 gameData[props.dataName].value = e.target.value
                 prototype.setPieceSetPieceProps({id: pieceSet.id, gameData })

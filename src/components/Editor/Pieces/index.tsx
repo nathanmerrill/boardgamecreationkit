@@ -7,7 +7,7 @@ import { Card, CardBody, Col, Row } from 'reactstrap';
 import { DataSetEditor } from './DataSets';
 import { ImageDisplay } from '../../Parts/ImageDisplay';
 import { Link, useHistory } from 'react-router-dom';
-import { PieceSetContext, PrototypeContext } from '../context';
+import { PieceSetContext, PrototypeContext, TableSelectionContext } from '../context';
 
 
 const CREATE_PIECE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -93,6 +93,8 @@ function PieceView(props: {selectedPieceId: string}){
 export default function Pieces(props: {selectedPieceId: string | undefined}){
     const prototype = React.useContext(PrototypeContext)
 
+    const [selection, updateSelection] = React.useState({row: 0, column: 0})
+
     if (!props.selectedPieceId){
         return (
             <Row>
@@ -103,20 +105,23 @@ export default function Pieces(props: {selectedPieceId: string | undefined}){
         )
     } else {
         const pieceSet = prototype.allPieceSets[props.selectedPieceId];
-        const dataSet = GetDataSet(pieceSet, prototype)
         return (
             <PieceSetContext.Provider value={pieceSet}>
-                <Row>
-                    <Col xs={12} md={8} className="d-none d-md-block">
-                        <PieceView selectedPieceId={props.selectedPieceId} />
-                    </Col>
-                    <Col xs={12} md={4} className="border-left">
-                        <PieceOptions />
-                    </Col>
-                    <Col xs={12}>
-                        <DataSetEditor dataSet={dataSet} />
-                    </Col>
-                </Row>
+                <TableSelectionContext.Provider value={selection}>
+                    <Row>
+                        <Col xs={12} md={8} className="d-none d-md-block">
+                            <PieceView selectedPieceId={props.selectedPieceId} />
+                        </Col>
+                        <Col xs={12} md={4} className="border-left">
+                            <PieceOptions />
+                        </Col>
+                        <Col xs={12}>
+                            <DataSetEditor onSelect={(row, column) => {
+                                updateSelection({row: row, column: column})
+                            }}/>
+                        </Col>
+                    </Row>
+                </TableSelectionContext.Provider>
             </PieceSetContext.Provider>
         )
     }

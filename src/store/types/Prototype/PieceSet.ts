@@ -3,14 +3,12 @@ import Prototype from '.';
 import { Nameable } from '../Interfaces';
 
 
-export interface DataSet extends Nameable {
+export interface DataSet {
     columns: string[]
     data: string[][]
 }
 
 export const EMPTY_DATASET: DataSet = {
-    id: "",
-    name: "",
     columns: [],
     data: [[""],[""]]    
 }

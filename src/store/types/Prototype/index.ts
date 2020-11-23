@@ -4,7 +4,6 @@ import GameImage from '../entities/GameImage';
 import Piece from '../entities/Piece';
 import PieceSet, { EMPTY_PIECE_SET } from './PieceSet';
 import { createAction, createReducer } from '@reduxjs/toolkit';
-import { DataSet, EMPTY_DATASET } from './DataSet';
 import { fillData } from '../../../lib';
 import { GameAction } from '../Timeline';
 import { Reducer } from 'redux';
@@ -27,12 +26,9 @@ const actions = {
     setDescription: createAction<string>("SET_DESCRIPTION"),
     setPlayerCounts: createAction<number[]>("SET_PLAYER_COUNTS"),
     addPieceSet: createAction("ADD_PIECE_SET", fillData(EMPTY_PIECE_SET, { name: "Piece set" })),
-    addDataSet: createAction("ADD_DATA_SET", fillData(EMPTY_DATASET, { name: "Data set" })),
     addImage: createAction<GameImage>("ADD_IMAGE"),
-    setDataSet: createAction<DataSet>("ADD_DATA_SET"),
     setPieceSetProps: createAction<Partial<PieceSet>&{id: string}>("SET_PIECE_SET_PROPS"),
     setPieceSetPieceProps: createAction<Partial<Piece>&{id: string}>("SET_PIECE_SET_PIECE_PROPS"),
-    setDataSetProps: createAction<Partial<DataSet>&{id: string}>("SET_DATA_SET_PROPS"),
     setActionProps: createAction<Partial<GameAction>&{id: string}>("SET_ACTION_PROPS"),
 }
 
@@ -46,7 +42,6 @@ export const reducePrototype: Reducer<Prototype> = createReducer(EMPTY_PROTOTYPE
         .addCase(actions.setPlayerCounts, (state, action) => { state.allowedPlayerCounts = action.payload })
         .addCase(actions.addPieceSet, (state, action) => { state.allPieceSets[action.payload.id] = action.payload })
         .addCase(actions.addImage, (state, action) => { state.allImages[action.payload.id] = action.payload })
-        .addCase(actions.addDataSet, (state, action) => { state.allDataSets[action.payload.id] = action.payload })
         .addCase(actions.setPieceSetProps, (state, action) => {
             state.allPieceSets[action.payload.id] = {
                 ...state.allPieceSets[action.payload.id],
@@ -62,12 +57,6 @@ export const reducePrototype: Reducer<Prototype> = createReducer(EMPTY_PROTOTYPE
                     ...pieceSet.piece as any,
                     ...payload,
                 }
-            }
-        })
-        .addCase(actions.setDataSetProps, (state, action) => {
-            state.allDataSets[action.payload.id] = {
-                ...state.allDataSets[action.payload.id],
-                ...action.payload,
             }
         })
         .addCase(actions.setActionProps, (state, action) => { state.allActions[action.payload.id] = {

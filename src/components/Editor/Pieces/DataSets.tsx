@@ -1,65 +1,44 @@
 import * as React from 'react';
 import $ from 'jquery';
-import ForEach from '../../Parts/ForEach';
 import Handsontable from 'handsontable';
+import PieceSet, { DataSet, GetDataSet } from '../../../store/types/Prototype/PieceSet';
 import ReactDOMServer from 'react-dom/server';
-import {
-    Badge,
-    Col,
-    FormGroup,
-    Input,
-    Label,
-    ListGroup,
-    ListGroupItem,
-    Row
-    } from 'reactstrap';
-import { DataSet } from '../../../store/types/Prototype/PieceSet';
 import { HotTable } from '@handsontable/react';
 import { ImageDisplay } from '../../Parts/ImageDisplay';
 import { ImageSelector } from '../../Parts/ImageSelector';
 import { isString } from 'util';
-import { Link } from 'react-router-dom';
-import { PrototypeContext } from '../context';
-import { useHistory } from 'react-router';
+import { PieceSetContext, PrototypeContext, PrototypeProps } from '../context';
 import 'handsontable/dist/handsontable.full.css';
 
-function DataSetButton(props: {dataSet: DataSet, selectedDataSetId: string | undefined}){
-    const prototype = React.useContext(PrototypeContext)
-    const editing = props.selectedDataSetId === props.dataSet.id;
-    
-    return (
-        <Link className={"list-group-item list-group-item-action d-flex justify-content-between align-items-center" + (editing ? " active": "")} to={"/Create/"+prototype.id+"/datasets/"+props.dataSet.id}>
-            {props.dataSet.name}
-            <Badge color="dark">{props.dataSet.data.length}</Badge>
-        </Link>
-    );
-}
 
-export function DataSetEditor(props: {dataSet: DataSet}){
+export function DataSetEditor(props: {onSelect:(row: number, column:number) => void}){
     const prototype = React.useContext(PrototypeContext)
+    const pieceSet = React.useContext(PieceSetContext)
 
-    const dataSet = JSON.parse(JSON.stringify(props.dataSet))
+    const dataSet = JSON.parse(JSON.stringify(GetDataSet(pieceSet, prototype)))
     
     let coords: Handsontable.wot.CellCoords | null = null;
 
+    const updateDataSet = (dataSet: DataSet) => {
+        setTimeout(() => prototype.setPieceSetProps({id: pieceSet.id, dataSet: recalculateColumns(dataSet)}));
+    }
+
     return (
         <React.Fragment>
-            <FormGroup inline>
-                <Label for="sheedName">Sheet name:</Label>
-                <Input className="ml-2" id="sheetName" value={dataSet.name} onChange={(e) => prototype.setDataSetProps({name: e.target.value, id: dataSet.id})} />
-            </FormGroup>
             <ImageSelector onSelect={(image) => {
                 if (coords){
                     let newDataSet = extendDataTo(dataSet, coords);
                     newDataSet.data[coords.row][coords.col] = '{"id":"'+image.id+'"}'
-                    setTimeout(() => prototype.setDataSet(newDataSet));
+                    updateDataSet(newDataSet)
                 }
             }}/>
-            <HotTable colWidths={150} manualColumnResize={true} colHeaders={dataSet.columns} rowHeaders={true} licenseKey="non-commercial-and-evaluation" data={dataSet.data} afterChange={(changes) => {
+            <HotTable colWidths={150} manualColumnResize={true} colHeaders={dataSet.columns} rowHeaders={true} licenseKey="non-commercial-and-evaluation" data={dataSet.data} 
+            afterSelection = {props.onSelect}
+            afterChange={(changes) => {
                 if (changes){
-                    setTimeout(() => prototype.setDataSet(recalculateColumns(dataSet)));
+                    updateDataSet(recalculateColumns(dataSet))
                 }
-            }}  contextMenu={{
+            }} contextMenu={{
                 items: {
                     "row_above": {},
                     "row_below": {},
@@ -73,7 +52,7 @@ export function DataSetEditor(props: {dataSet: DataSet}){
                             let name = prompt('Enter column name:')
                             if (name){
                                 dataSet.columns[selection[0].start.col] = name;
-                                setTimeout(() => prototype.setDataSet(dataSet));
+                                updateDataSet(dataSet)
                             }
                         }
                     },
@@ -86,7 +65,7 @@ export function DataSetEditor(props: {dataSet: DataSet}){
                     }
                 }
             }} 
-            afterRenderer={(TD, row, column, prop, value, cellProps) => {
+            afterRenderer={(TD, row, column, prop, value) => {
                     if (isString(value) && value.startsWith('{')){
                     TD.innerHTML = ReactDOMServer.renderToString(<ImageDisplay image={value} size={25} />)
                 }
