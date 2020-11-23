@@ -1,5 +1,4 @@
 import * as React from 'react';
-import DataSets from './DataSets';
 import PrototypeBasicInfo from './BasicInfo';
 import PrototypePieces from './Pieces';
 import PrototypeTimeline from './Timeline';
@@ -27,8 +26,6 @@ function SubPageContent(props: { match: RouteProps }) {
     switch (props.match.subpage) {
         case 'pieces':
             return <PrototypePieces selectedPieceId={props.match.subitemid}/>;
-        case 'datasets':
-            return <DataSets selectedDataSetId={props.match.subitemid} />;
         case 'timeline':
             return <PrototypeTimeline />;
         default:
@@ -48,7 +45,6 @@ function Editor(prototype: PrototypeProps & RouteComponentProps<RouteProps>) {
             <Nav tabs>
                 <SubpageLink subpage="" title="Basic Info" match={match} />
                 <SubpageLink subpage="pieces" title="Pieces" match={match}  />
-                <SubpageLink subpage="datasets" title="Data Sets" match={match}  />
                 <SubpageLink subpage="timeline" title="Timeline" match={match}  />
             </Nav>
             <SubPageContent match={match}  />

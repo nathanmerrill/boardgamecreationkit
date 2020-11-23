@@ -1,21 +1,21 @@
 import * as React from 'react';
-import DataType from '../../store/types/data/DataType';
-import GameImage from '../../store/types/entities/GameImage';
-import PieceSet from '../../store/types/Prototype/PieceSet';
-import Prototype from '../../store/types/Prototype';
+import DataType from '../../../store/types/data/DataType';
+import GameImage from '../../../store/types/entities/GameImage';
+import PieceSet, { GetDataSet } from '../../../store/types/Prototype/PieceSet';
+import Prototype from '../../../store/types/Prototype';
 import { Button, Col, Input, InputGroup, InputGroupAddon, Label, Row } from 'reactstrap';
 import { Carousel } from 'react-responsive-carousel';
-import { DataSourceType, Literal } from '../../store/types/data/DataSource';
-import { EMPTY_STRING } from '../../store/library/LiteralValues';
-import { ImageDisplay } from '../Parts/ImageDisplay';
-import { ImageSelector } from '../Parts/ImageSelector';
-import { PieceSetContext, PrototypeContext } from './context';
-import { PieceType } from '../../store/types/entities/Piece';
-import { Select } from '../Parts/Select';
+import { DataSourceType, Literal } from '../../../store/types/data/DataSource';
+import { EMPTY_STRING } from '../../../store/library/LiteralValues';
+import { ImageDisplay } from '../../Parts/ImageDisplay';
+import { ImageSelector } from '../../Parts/ImageSelector';
+import { PieceSetContext, PrototypeContext } from '../context';
+import { PieceType } from '../../../store/types/entities/Piece';
+import { Select } from '../../Parts/Select';
 
 
 export function readFromDataSet(pieceSet: PieceSet, prototype: Prototype, column: string, row: number): string {
-    const dataSet = prototype.allDataSets[pieceSet.dataSetId]
+    const dataSet = GetDataSet(pieceSet, prototype)
     if (!dataSet || !dataSet.data || !column){
         return ""
     }
@@ -37,7 +37,7 @@ function DataSetInput(props: {label: string, selectedColumn: string, onColumnCha
     const prototype = React.useContext(PrototypeContext)
     const pieceSet = React.useContext(PieceSetContext)
     const dataSetId = pieceSet.dataSetId;
-    const dataSet = prototype.allDataSets[dataSetId] || {columns: [], data: []}
+    const dataSet = GetDataSet(pieceSet, prototype)
     const dataValue: Array<string> = [];
     dataValue[0] = ""
 
@@ -172,7 +172,6 @@ function PieceDataInput(props: {dataName: string}) {
             }} />
             {typeSelector}
         </DataSetInput>
-
     )
 }
 
@@ -217,7 +216,6 @@ function PieceDataInputs() {
 export default function PieceOptions() {
     const prototype = React.useContext(PrototypeContext)
     const pieceSet = React.useContext(PieceSetContext)
-    const dataSets = Object.values(prototype.allDataSets);
     
     return (
         <form>
@@ -233,12 +231,8 @@ export default function PieceOptions() {
                         prototype.setPieceSetPieceProps({id: pieceSet.id, type: (e as any)})
                     }
                 }
-            } />
-
-            <label htmlFor="datasetSelect">Dataset</label>
-            <Select id="dataSetSelect" values={dataSets} noneOption="None" selectedValue={pieceSet.dataSetId} onChange={(e) => {
-                prototype.setPieceSetProps({id: pieceSet.id, dataSetId: (e || {id:""}).id });
-            }}/>
+            } />            
+            
             <label htmlFor="copies">Copies</label>
             <input type="number" className="form-control" id="copies" value={pieceSet.copies} onChange={(e) =>
                 prototype.setPieceSetProps({id: pieceSet.id, copies: e.currentTarget.valueAsNumber})

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import $ from 'jquery';
-import ForEach from '../Parts/ForEach';
+import ForEach from '../../Parts/ForEach';
 import Handsontable from 'handsontable';
 import ReactDOMServer from 'react-dom/server';
 import {
@@ -13,13 +13,13 @@ import {
     ListGroupItem,
     Row
     } from 'reactstrap';
-import { DataSet } from '../../store/types/Prototype/DataSet';
+import { DataSet } from '../../../store/types/Prototype/PieceSet';
 import { HotTable } from '@handsontable/react';
-import { ImageDisplay } from '../Parts/ImageDisplay';
-import { ImageSelector } from '../Parts/ImageSelector';
+import { ImageDisplay } from '../../Parts/ImageDisplay';
+import { ImageSelector } from '../../Parts/ImageSelector';
 import { isString } from 'util';
 import { Link } from 'react-router-dom';
-import { PrototypeContext } from './context';
+import { PrototypeContext } from '../context';
 import { useHistory } from 'react-router';
 import 'handsontable/dist/handsontable.full.css';
 
@@ -35,30 +35,10 @@ function DataSetButton(props: {dataSet: DataSet, selectedDataSetId: string | und
     );
 }
 
-function DataSetList(props: {selectedDataSetId: string | undefined}){
-    const history = useHistory();
+export function DataSetEditor(props: {dataSet: DataSet}){
     const prototype = React.useContext(PrototypeContext)
-    return (
-    <React.Fragment>
-        <ListGroup>
-            <ListGroupItem tag="button" action onClick={(e) => {
-                    var dataSetAction = prototype.addDataSet();
-                    history.push('/Create/' + prototype.id+'/datasets/'+dataSetAction.payload.id);
-                }}>
-                New Dataset
-            </ListGroupItem>
-        </ListGroup>
-        <ListGroup>
-            <ForEach values={prototype.allDataSets}>
-                {dataSet => <DataSetButton dataSet={dataSet} selectedDataSetId={props.selectedDataSetId} /> }
-            </ForEach>
-        </ListGroup>
-    </React.Fragment>
-    )
-}
 
-function DataSetEditor(props: {dataSet: DataSet}){
-    const prototype = React.useContext(PrototypeContext)
+    const dataSet = JSON.parse(JSON.stringify(props.dataSet))
     
     let coords: Handsontable.wot.CellCoords | null = null;
 
@@ -66,18 +46,18 @@ function DataSetEditor(props: {dataSet: DataSet}){
         <React.Fragment>
             <FormGroup inline>
                 <Label for="sheedName">Sheet name:</Label>
-                <Input className="ml-2" id="sheetName" value={props.dataSet.name} onChange={(e) => prototype.setDataSetProps({name: e.target.value, id: props.dataSet.id})} />
+                <Input className="ml-2" id="sheetName" value={dataSet.name} onChange={(e) => prototype.setDataSetProps({name: e.target.value, id: dataSet.id})} />
             </FormGroup>
             <ImageSelector onSelect={(image) => {
                 if (coords){
-                    let newDataSet = extendDataTo(props.dataSet, coords);
+                    let newDataSet = extendDataTo(dataSet, coords);
                     newDataSet.data[coords.row][coords.col] = '{"id":"'+image.id+'"}'
                     setTimeout(() => prototype.setDataSet(newDataSet));
                 }
             }}/>
-            <HotTable colWidths={150} manualColumnResize={true} colHeaders={props.dataSet.columns} rowHeaders={true} licenseKey="non-commercial-and-evaluation" data={props.dataSet.data} afterChange={(changes) => {
+            <HotTable colWidths={150} manualColumnResize={true} colHeaders={dataSet.columns} rowHeaders={true} licenseKey="non-commercial-and-evaluation" data={dataSet.data} afterChange={(changes) => {
                 if (changes){
-                    setTimeout(() => prototype.setDataSet(recalculateColumns(props.dataSet)));
+                    setTimeout(() => prototype.setDataSet(recalculateColumns(dataSet)));
                 }
             }}  contextMenu={{
                 items: {
@@ -92,8 +72,8 @@ function DataSetEditor(props: {dataSet: DataSet}){
                         callback: function(key, selection, clickEvent) {
                             let name = prompt('Enter column name:')
                             if (name){
-                                props.dataSet.columns[selection[0].start.col] = name;
-                                setTimeout(() => prototype.setDataSet(props.dataSet));
+                                dataSet.columns[selection[0].start.col] = name;
+                                setTimeout(() => prototype.setDataSet(dataSet));
                             }
                         }
                     },
@@ -114,25 +94,6 @@ function DataSetEditor(props: {dataSet: DataSet}){
             
             />
         </React.Fragment>
-    );
-}
-
-export default function DataSets(props: {selectedDataSetId: string | undefined}) {
-    const prototype = React.useContext(PrototypeContext)
-    const dataSet: DataSet = props.selectedDataSetId ? JSON.parse(JSON.stringify(prototype.allDataSets[props.selectedDataSetId])) : undefined;
-    
-    return (
-        <Row className="pt-2">
-            <Col xs={2}>
-                <DataSetList selectedDataSetId={props.selectedDataSetId}/>
-            </Col>
-            {
-                dataSet && 
-                <Col xs={10}>
-                    <DataSetEditor dataSet={dataSet} />
-                </Col>                
-            }
-        </Row>
     );
 }
 

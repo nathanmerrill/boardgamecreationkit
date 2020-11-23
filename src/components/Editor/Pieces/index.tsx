@@ -1,17 +1,13 @@
 import * as React from 'react';
-import ForEach from '../Parts/ForEach';
+import ForEach from '../../Parts/ForEach';
 import PieceOptions, { readFromDataSet } from './PieceOptions';
-import PieceSet from '../../store/types/Prototype/PieceSet';
-import Prototype from '../../store/types/Prototype';
-import {
-    Card,
-    CardBody,
-    Col,
-    Row
-    } from 'reactstrap';
-import { ImageDisplay } from '../Parts/ImageDisplay';
+import PieceSet, { GetDataSet } from '../../../store/types/Prototype/PieceSet';
+import Prototype from '../../../store/types/Prototype';
+import { Card, CardBody, Col, Row } from 'reactstrap';
+import { DataSetEditor } from './DataSets';
+import { ImageDisplay } from '../../Parts/ImageDisplay';
 import { Link, useHistory } from 'react-router-dom';
-import { PieceSetContext, PrototypeContext } from './context';
+import { PieceSetContext, PrototypeContext } from '../context';
 
 
 const CREATE_PIECE_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -51,18 +47,17 @@ function pieceSetImage(pieceSet: PieceSet, prototype: Prototype, row: number) {
 }
 
 
-function PieceListItem(props: {piece: PieceSet, selectedPieceId: string | undefined}) {
+function PieceListItem(props: {piece: PieceSet}) {
     const prototype = React.useContext(PrototypeContext)
-    const editing = props.selectedPieceId === props.piece.id;
     return (
-        <TokenCard image={pieceSetImage(props.piece, prototype, 0)} border={ editing } >
+        <TokenCard image={pieceSetImage(props.piece, prototype, 0)} >
             <h5>{props.piece.name}</h5>
-            <Link className={"btn btn-primary"+(editing ? " disabled": "")} to={"/Create/"+prototype.id+"/pieces/"+props.piece.id}>{editing ? "Editing" : "Edit"}</Link>
+            <Link className={"btn btn-primary"} to={"/Create/"+prototype.id+"/pieces/"+props.piece.id}>Edit</Link>
         </TokenCard>
     )
 }
 
-function PieceList(props: {selectedPieceId: string | undefined}){
+function PieceList(){
     const history = useHistory()
     const prototype = React.useContext(PrototypeContext)
 
@@ -79,7 +74,7 @@ function PieceList(props: {selectedPieceId: string | undefined}){
         <ForEach values={prototype.allPieceSets}>
             {pieceSet => 
                 <Col xs={3}>
-                    <PieceListItem piece={pieceSet} selectedPieceId={props.selectedPieceId} />
+                    <PieceListItem piece={pieceSet} />
                 </Col>
             }
         </ForEach>    
@@ -87,21 +82,42 @@ function PieceList(props: {selectedPieceId: string | undefined}){
     )
 }
 
-export default function Pieces(props: {selectedPieceId: string | undefined}){
-    const prototype = React.useContext(PrototypeContext)
-    const pieceSet = props.selectedPieceId ? prototype.allPieceSets[props.selectedPieceId] : null;
+function PieceView(props: {selectedPieceId: string}){
     return (
         <Row>
-            <Col xs={8} className={(pieceSet ? " d-none d-md-block" : "")}>
-                <PieceList selectedPieceId={props.selectedPieceId} />
-            </Col>
-            {pieceSet &&
-            <PieceSetContext.Provider value={pieceSet}>
-                <Col xs={12} md={4} className="border-left">
-                    <PieceOptions />
-                </Col>
-            </PieceSetContext.Provider>
-            }
+            
         </Row>
     )
+}
+
+export default function Pieces(props: {selectedPieceId: string | undefined}){
+    const prototype = React.useContext(PrototypeContext)
+
+    if (!props.selectedPieceId){
+        return (
+            <Row>
+                <Col xs={12}>
+                    <PieceList />
+                </Col>
+            </Row>
+        )
+    } else {
+        const pieceSet = prototype.allPieceSets[props.selectedPieceId];
+        const dataSet = GetDataSet(pieceSet, prototype)
+        return (
+            <PieceSetContext.Provider value={pieceSet}>
+                <Row>
+                    <Col xs={12} md={8} className="d-none d-md-block">
+                        <PieceView selectedPieceId={props.selectedPieceId} />
+                    </Col>
+                    <Col xs={12} md={4} className="border-left">
+                        <PieceOptions />
+                    </Col>
+                    <Col xs={12}>
+                        <DataSetEditor dataSet={dataSet} />
+                    </Col>
+                </Row>
+            </PieceSetContext.Provider>
+        )
+    }
 }

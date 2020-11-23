@@ -1,28 +1,33 @@
 import Game from './types/entities/Game';
-import GameScripts from './library/ScriptLibrary';
 import GameState, { reduceGameState } from './types/GameState';
 import Player from './types/entities/Player';
 import Prototype, { EMPTY_PROTOTYPE, reducePrototype } from './types/Prototype';
 import { createAction, createReducer, nanoid } from '@reduxjs/toolkit';
-import { literalScriptToAction } from './library/lib';
+import { EMPTY_GAME_PHASE, GamePhase } from './types/Timeline';
 import { Reducer } from 'redux';
 
 export const actions = {
     newPrototype: createAction("NEW_PROTOTYPE", () => {
-        const prototype = {
+        const prototype: Prototype = {
             ...EMPTY_PROTOTYPE,
             id: nanoid(),
             authorUsername: "Unnamed", 
             name: "Untitled", 
             allowedPlayerCounts: [2],
         }
-        const rootAction = literalScriptToAction("root", GameScripts.Multistep, prototype)
+        
+        const startPhase: GamePhase = {
+            ...EMPTY_GAME_PHASE,
+            id: nanoid(),
+            name: "Start",
+        }
+        
         return {
             payload: {
-                ...rootAction.prototype,
-                rootAction: rootAction.action.id,
-                allActions: {
-                    [rootAction.action.id]: rootAction.action
+                ...prototype,                
+                startPhase: startPhase.id,
+                allPhases : {
+                    [startPhase.id]: startPhase
                 }
             }
         }

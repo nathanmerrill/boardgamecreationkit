@@ -1,7 +1,7 @@
 import * as React from 'react';
-import NumbersInput from '../Parts/NumbersInput';
+import NumbersInput from '../../Parts/NumbersInput';
 import { FormGroup, Input, Label } from 'reactstrap';
-import { PrototypeContext } from './context';
+import { PrototypeContext } from '../context';
 
 
 export default function BasicInfo() {

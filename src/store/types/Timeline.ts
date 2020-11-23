@@ -8,22 +8,20 @@ export interface GameAction extends Nameable {
     available: CalculatedDataSource // Returns boolean
 }
 
-export namespace GameAction {
-    export const EMPTY: GameAction = {
-        id: "",
-        name: "",
-        automatic: false,
-        available: {
-            sourceType: DataSourceType.Literal,
-            returnType: DataType.Boolean,
-            value: "true",
-        },
-        newGameState: {
-            sourceType: DataSourceType.Function,
-            returnType: DataType.GameState,
-            scriptId: "",
-            arguments: {}
-        }
+export const EMPTY_GAME_ACTION: GameAction = {
+    id: "",
+    name: "",
+    automatic: false,
+    available: {
+        sourceType: DataSourceType.Literal,
+        returnType: DataType.Boolean,
+        value: "true",
+    },
+    newGameState: {
+        sourceType: DataSourceType.Function,
+        returnType: DataType.GameState,
+        scriptId: "",
+        arguments: {}
     }
 }
 
@@ -32,11 +30,9 @@ export interface GamePhase extends Nameable {
     terminal: boolean
 }
 
-export namespace GamePhase {
-    export const EMPTY: GamePhase = {
-        id: "",
-        name: "",
-        actions: {},
-        terminal: false,
-    }
+export const EMPTY_GAME_PHASE: GamePhase = {
+    id: "",
+    name: "",
+    actions: {},
+    terminal: false,
 }

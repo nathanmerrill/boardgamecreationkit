@@ -13,12 +13,10 @@ import { Reducer } from 'redux';
 export default interface Prototype extends Game {
     allPieceSets: Record<string, PieceSet>
     allLocationSets: Record<string, BoardLocationSet>
-    allDataSets: Record<string, DataSet>
 }
 
 export const EMPTY_PROTOTYPE: Prototype = {
     ...EMPTY_GAME,
-    allDataSets: {},
     allPieceSets: {},
     allLocationSets: {},
 }

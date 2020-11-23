@@ -1,10 +1,10 @@
 import * as React from 'react';
-import DataSource, { DataSourceType } from '../../store/types/data/DataSource';
-import DataType, { GetDefaultDataType, IsPrimitive, ToSingular } from '../../store/types/data/DataType';
+import DataSource, { DataSourceType } from '../../../store/types/data/DataSource';
+import DataType, { GetDefaultDataType, IsPrimitive, ToSingular } from '../../../store/types/data/DataType';
 import { Col, Input, Label, Row } from 'reactstrap';
-import { GameAction, GamePhase } from '../../store/types/Timeline';
-import { PrototypeContext } from './context';
-import { Select } from '../Parts/Select';
+import { GameAction, GamePhase } from '../../../store/types/Timeline';
+import { PrototypeContext } from '../context';
+import { Select } from '../../Parts/Select';
 
 
 function AvailableSubactions(){
