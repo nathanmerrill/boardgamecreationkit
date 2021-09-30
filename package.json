@@ -10,7 +10,7 @@
     "bootstrap": "^4.5.0",
     "connected-react-router": "6.5.2",
     "dompurify": "^2.0.12",
-    "handsontable": "^7.4.2",
+    "handsontable": "^10.0.0",
     "history": "4.10.1",
     "jquery": "^3.4.1",
     "js-interpreter": "^2.2.0",
